@@ -36,12 +36,12 @@ def classify_species(label, node_id):
     label_lower = label.lower()
     match = re.search(r'\(([^)]+)\)', label_lower)
     if not match:
-        return None
+        return 0
         
     sci_name = match.group(1).strip()
     parts = sci_name.split()
     if not parts:
-        return None
+        return 0
     genus = parts[0]
     
     # 1. Cetaceans
@@ -63,11 +63,11 @@ def classify_species(label, node_id):
             return 0
         return 1
         
-    return None
+    return 0
 
 def manual_fdr(pvals, alpha=0.05):
     """Failsafe manual Benjamini-Hochberg FDR correction using only numpy."""
-    pvals = np.asfarray(pvals)
+    pvals = np.asarray(pvals, dtype=float)
     n = len(pvals)
     by_descend = pvals.argsort()[::-1]
     by_orig = by_descend.argsort()
@@ -97,38 +97,64 @@ def main():
     target_species = echolocators | non_echolocators
     
     print(f"    - Echolocating species: {len(echolocators)}")
-    print(f"    - Control species: {len(non_echolocators)}")
+    print(f"    - Background / Control species: {len(non_echolocators)}")
     
-    # 2. Query positive selection substitutions at leaf nodes
-    print("[*] Querying positive selection substitutions across all genes (this may take 1-2 minutes)...")
-    sql = """
-    SELECT ss.gene_name, ss.site_index, bm.master_node_id
-    FROM site_substitutions ss
-    JOIN branch_mappings bm ON ss.gene_name = bm.gene_name AND ss.branch_name = bm.branch_name
-    JOIN master_nodes mn ON bm.master_node_id = mn.node_id
-    JOIN site_results sr ON ss.gene_name = sr.gene_name AND ss.site_index = sr.site_index
-    WHERE ss.is_synonymous = 0
-      AND mn.is_leaf = 1
-      AND sr.p_value < 0.05
-    """
-    df = pd.read_sql_query(sql, conn)
+    # 2. Query positive selection substitutions at leaf nodes using fast gene-by-gene lookup
+    print("[*] Querying selection events from database using gene-by-gene lookup...")
+    import time
+    t_start_query = time.time()
+    
+    # Get all genes with selected sites
+    selected_genes = [r[0] for r in conn.execute("SELECT DISTINCT gene_name FROM site_results WHERE p_value < 0.05").fetchall()]
+    all_genes = pd.read_sql_query("SELECT DISTINCT gene_name FROM gene_results", conn)["gene_name"].tolist()
+    print(f"    - Found {len(selected_genes)} genes with selected sites.")
+    
+    records = []
+    for idx, gene in enumerate(selected_genes):
+        if idx % 2000 == 0 and idx > 0:
+            print(f"      - Querying gene {idx}/{len(selected_genes)}...")
+            
+        sites = [r[0] for r in conn.execute("SELECT site_index FROM site_results WHERE gene_name = ? AND p_value < 0.05", (gene,)).fetchall()]
+        if not sites:
+            continue
+            
+        placeholders = ','.join(['?'] * len(sites))
+        sql = f"""
+        SELECT bm.master_node_id, COUNT(*)
+        FROM site_substitutions ss
+        JOIN branch_mappings bm ON ss.gene_name = bm.gene_name AND ss.branch_name = bm.branch_name
+        JOIN master_nodes mn ON bm.master_node_id = mn.node_id
+        WHERE ss.gene_name = ?
+          AND ss.site_index IN ({placeholders})
+          AND ss.is_synonymous = 0
+          AND mn.is_leaf = 1
+        GROUP BY bm.master_node_id
+        """
+        res = conn.execute(sql, [gene] + sites).fetchall()
+        for node_id, count in res:
+            records.append({
+                "gene_name": gene,
+                "master_node_id": node_id,
+                "count": count
+            })
+            
+    df = pd.DataFrame(records)
     conn.close()
     
-    print(f"    - Retreived {len(df)} total non-synonymous substitutions at selected sites.")
+    print(f"    - Retrieved {len(df)} total non-synonymous substitutions at selected sites in {time.time()-t_start_query:.2f}s.")
     
-    # Filter for target Chiroptera & Cetacea species
+    # Filter for target species (all classified species)
     df = df[df["master_node_id"].isin(target_species)]
     df["is_echolocator"] = df["master_node_id"].apply(lambda x: 1 if x in echolocators else 0)
-    print(f"    - Filtered to {len(df)} substitutions on canonical target lineages.")
+    print(f"    - Filtered to {len(df)} substitutions on classified lineages.")
     
     # 3. Aggregate by gene
     print("[*] Aggregating substitutions by gene...")
-    gene_groups = df.groupby("gene_name")
-    
+    # Group by gene and calculate echo/control counts
     gene_counts = []
-    for gene_name, group in gene_groups:
-        echo_count = int(group["is_echolocator"].sum())
-        control_count = len(group) - echo_count
+    for gene_name, group in df.groupby("gene_name"):
+        echo_count = int(group[group["is_echolocator"] == 1]["count"].sum())
+        control_count = int(group[group["is_echolocator"] == 0]["count"].sum())
         gene_counts.append({
             "gene_name": gene_name,
             "echo_subs": echo_count,
@@ -136,12 +162,15 @@ def main():
         })
         
     counts_df = pd.DataFrame(gene_counts)
-    
+    if counts_df.empty:
+        print("[!] No selection events found on leaf branches.")
+        sys.exit(0)
+        
     # Background totals across all selected site substitutions
     total_echo_subs = int(counts_df["echo_subs"].sum())
     total_control_subs = int(counts_df["control_subs"].sum())
     
-    print(f"    - Total target positive-selection substitutions: Echolocating={total_echo_subs}, Controls={total_control_subs}")
+    print(f"    - Total target positive-selection substitutions: Echolocating={total_echo_subs}, Background={total_control_subs}")
     
     # 4. Perform Fisher's Exact Test per gene
     print("[*] Running Fisher's exact tests for all genes...")

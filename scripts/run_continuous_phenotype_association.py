@@ -23,6 +23,7 @@ import os
 import sys
 import re
 import sqlite3
+import time
 import numpy as np
 import pandas as pd
 import scipy.linalg as la
@@ -177,8 +178,9 @@ def perform_pgls(y, x, L):
         
         # Calculate standard errors and p-values
         dof = n - 2
-        if residuals.size > 0 and residuals[0] > 0:
-            mse = residuals[0] / dof
+        res_val = float(residuals) if residuals.size > 0 else -1.0
+        if res_val > 0:
+            mse = res_val / dof
         else:
             pred = X_mat @ beta
             mse = np.sum((y_trans - pred)**2) / dof
@@ -197,7 +199,7 @@ def perform_pgls(y, x, L):
         return np.nan, np.nan, np.nan, np.nan, np.nan
 
 def manual_fdr(pvals, alpha=0.05):
-    pvals = np.asfarray(pvals)
+    pvals = np.asarray(pvals, dtype=float)
     n = len(pvals)
     by_descend = pvals.argsort()[::-1]
     by_orig = by_descend.argsort()
@@ -240,27 +242,51 @@ def main():
         print(f"[!] Error: SQLite DB '{DB_PATH}' not found.")
         sys.exit(1)
         
-    print(f"[*] Querying selection events from '{DB_PATH}'...")
+    print(f"[*] Querying selection events from '{DB_PATH}' using gene-by-gene lookup...")
     conn = sqlite3.connect(DB_PATH)
     
-    sql = """
-    SELECT ss.gene_name, bm.master_node_id, COUNT(*) as selection_substitutions
-    FROM site_substitutions ss
-    JOIN branch_mappings bm ON ss.gene_name = bm.gene_name AND ss.branch_name = bm.branch_name
-    JOIN master_nodes mn ON bm.master_node_id = mn.node_id
-    JOIN site_results sr ON ss.gene_name = sr.gene_name AND ss.site_index = sr.site_index
-    WHERE ss.is_synonymous = 0
-      AND mn.is_leaf = 1
-      AND sr.p_value < 0.05
-    GROUP BY ss.gene_name, bm.master_node_id
-    """
-    
-    events_df = pd.read_sql_query(sql, conn)
     # Fetch list of all genes
     all_genes = pd.read_sql_query("SELECT DISTINCT gene_name FROM gene_results", conn)["gene_name"].tolist()
+    
+    # Get all genes with selected sites
+    selected_genes = [r[0] for r in conn.execute("SELECT DISTINCT gene_name FROM site_results WHERE p_value < 0.05").fetchall()]
+    print(f"    - Found {len(selected_genes)} genes with selected sites.")
+    
+    # Extract selection events gene-by-gene
+    records = []
+    t_start_query = time.time()
+    for idx, gene in enumerate(selected_genes):
+        if idx % 2000 == 0 and idx > 0:
+            print(f"      - Querying gene {idx}/{len(selected_genes)}...")
+            
+        sites = [r[0] for r in conn.execute("SELECT site_index FROM site_results WHERE gene_name = ? AND p_value < 0.05", (gene,)).fetchall()]
+        if not sites:
+            continue
+            
+        placeholders = ','.join(['?'] * len(sites))
+        sql = f"""
+        SELECT bm.master_node_id, COUNT(*)
+        FROM site_substitutions ss
+        JOIN branch_mappings bm ON ss.gene_name = bm.gene_name AND ss.branch_name = bm.branch_name
+        JOIN master_nodes mn ON bm.master_node_id = mn.node_id
+        WHERE ss.gene_name = ?
+          AND ss.site_index IN ({placeholders})
+          AND ss.is_synonymous = 0
+          AND mn.is_leaf = 1
+        GROUP BY bm.master_node_id
+        """
+        res = conn.execute(sql, [gene] + sites).fetchall()
+        for node_id, count in res:
+            records.append({
+                "gene_name": gene,
+                "master_node_id": node_id,
+                "selection_substitutions": count
+            })
+            
+    events_df = pd.DataFrame(records)
     conn.close()
     
-    print(f"    - Found {len(events_df)} terminal branch selection records across {len(all_genes)} genes.")
+    print(f"    - Found {len(events_df)} terminal branch selection records across {len(all_genes)} genes in {time.time()-t_start_query:.2f}s.")
     
     # Map species names from DB to tree leaves
     # Note: Leaf name (e.g. hg) matches the prefix before the pipe in DB (hg|Human (Homo sapiens))

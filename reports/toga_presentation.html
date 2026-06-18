@@ -618,9 +618,8 @@
                             <strong>Toothed Whales</strong>: 26 odontocete genera (such as Tursiops, Phocoena, Physeter).</p>
                         </div>
                         <div class="info-card" style="border-left-color: var(--accent-purple);">
-                            <h4>Control Lineages (N = 28 species)</h4>
-                            <p><strong>Megabats</strong>: Non-echolocating Pteropodidae (such as Pteropus, Rousettus).<br>
-                            <strong>Baleen Whales</strong>: 6 non-echolocating mysticete genera (such as Balaenoptera, Megaptera).</p>
+                            <h4>Background / Control Lineages (N = 632 species)</h4>
+                            <p><strong>All Non-Echolocating Mammals</strong>: Expanding the control set from 28 to 632 mammalian species (including baleen whales, megabats, carnivores, primates, rodents, etc.) to establish a comprehensive background model.</p>
                         </div>
                     </div>
                     <div>
@@ -650,14 +649,14 @@
                 <div class="grid-2">
                     <div>
                         <div class="stat-box" style="margin-bottom: 20px;">
-                            <div class="stat-val">459,832</div>
+                            <div class="stat-val">2,269,396</div>
                             <div class="stat-label">Positive Selection Substitutions on Study Lineages</div>
                         </div>
                         <ul style="margin-left: 20px; line-height: 1.8;">
-                            <li><strong>Echolocators</strong>: 415,844 positive selection events</li>
-                            <li><strong>Controls</strong>: 43,988 positive selection events</li>
-                            <li><strong>Echolocator-to-Control Ratio</strong>: <span class="highlight">~9.45 to 1</span></li>
-                            <li><em>Note:</em> The ratio reflects the larger branch subset of echolocators, which is statistically normalized in our Fisher's Exact test background computations.</li>
+                            <li><strong>Echolocators (110 spp)</strong>: 411,386 positive selection events</li>
+                            <li><strong>Background (632 spp)</strong>: 1,858,010 positive selection events</li>
+                            <li><strong>Echolocator-to-Background Ratio</strong>: <span class="highlight">~1 to 4.52</span></li>
+                            <li><em>Note:</em> The ratio reflects the larger branch subset of the background set, which is statistically normalized in our Fisher's Exact test background computations.</li>
                         </ul>
                     </div>
                     <div class="chart-container">
@@ -666,19 +665,19 @@
                             <div>
                                 <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
                                     <span>Echolocating (110 species)</span>
-                                    <span class="highlight">415,844</span>
+                                    <span class="highlight">411,386 (18.1%)</span>
                                 </div>
                                 <div style="width: 100%; height: 24px; background:#1e293b; border-radius:12px; overflow:hidden;">
-                                    <div style="width: 90.4%; height: 100%; background: linear-gradient(to right, #38bdf8, #a78bfa); border-radius:12px;"></div>
+                                    <div style="width: 18.1%; height: 100%; background: linear-gradient(to right, #38bdf8, #a78bfa); border-radius:12px;"></div>
                                 </div>
                             </div>
                             <div>
                                 <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                                    <span>Control (28 species)</span>
-                                    <span class="highlight-purple">43,988</span>
+                                    <span>Background (632 species)</span>
+                                    <span class="highlight-purple">1,858,010 (81.9%)</span>
                                 </div>
                                 <div style="width: 100%; height: 24px; background:#1e293b; border-radius:12px; overflow:hidden;">
-                                    <div style="width: 9.6%; height: 100%; background: #a78bfa; border-radius:12px;"></div>
+                                    <div style="width: 81.9%; height: 100%; background: #a78bfa; border-radius:12px;"></div>
                                 </div>
                             </div>
                         </div>
@@ -698,7 +697,7 @@
                 Top Genes Enriched in Echolocators
             </h1>
             <div class="slide-content" style="justify-content: flex-start; overflow: visible;">
-                <p style="margin-bottom: 10px; font-size: 0.95rem;">Ranked by statistical significance (P-value). Full screen results are available in the reports folder.</p>
+                <p style="margin-bottom: 10px; font-size: 0.95rem;">Ranked by statistical significance (P-value). Control set includes all 632 non-echolocating mammalian genomes.</p>
                 <div style="overflow-x: auto; max-height: 400px;">
                     <table>
                         <thead>
@@ -706,7 +705,7 @@
                                 <th>Rank</th>
                                 <th>Gene</th>
                                 <th>Echo Subs</th>
-                                <th>Ctrl Subs</th>
+                                <th>Bg Subs</th>
                                 <th>Odds Ratio</th>
                                 <th>P-value</th>
                                 <th>FDR Q-value</th>
@@ -715,93 +714,93 @@
                         <tbody>
                             <tr>
                                 <td>1</td>
-                                <td class="highlight">RNASE9</td>
-                                <td>494</td>
-                                <td>0</td>
-                                <td>Infinite</td>
-                                <td>2.60e-22</td>
-                                <td>2.38e-18</td>
+                                <td class="highlight">CD58</td>
+                                <td>608</td>
+                                <td>1034</td>
+                                <td>2.66</td>
+                                <td>5.26e-73</td>
+                                <td>0.0000</td>
                             </tr>
                             <tr>
                                 <td>2</td>
-                                <td class="highlight">RNPEP</td>
-                                <td>1093</td>
-                                <td>27</td>
-                                <td>4.29</td>
-                                <td>9.62e-22</td>
-                                <td>4.39e-18</td>
+                                <td class="highlight">FAM111B</td>
+                                <td>562</td>
+                                <td>1031</td>
+                                <td>2.46</td>
+                                <td>1.73e-59</td>
+                                <td>0.0000</td>
                             </tr>
                             <tr>
                                 <td>3</td>
-                                <td class="highlight">GPRIN1</td>
-                                <td>246</td>
-                                <td>0</td>
-                                <td>Infinite</td>
-                                <td>1.80e-11</td>
-                                <td>5.47e-08</td>
+                                <td class="highlight">NLRP13</td>
+                                <td>590</td>
+                                <td>1256</td>
+                                <td>2.12</td>
+                                <td>1.53e-46</td>
+                                <td>0.0000</td>
                             </tr>
                             <tr>
                                 <td>4</td>
-                                <td class="highlight">AOX1</td>
-                                <td>562</td>
-                                <td>15</td>
-                                <td>3.97</td>
-                                <td>3.20e-11</td>
-                                <td>5.94e-08</td>
+                                <td class="highlight">PNLIPRP3</td>
+                                <td>494</td>
+                                <td>994</td>
+                                <td>2.25</td>
+                                <td>3.73e-44</td>
+                                <td>0.0000</td>
                             </tr>
                             <tr>
                                 <td>5</td>
-                                <td class="highlight">PTPRH</td>
-                                <td>471</td>
-                                <td>10</td>
-                                <td>4.99</td>
-                                <td>3.53e-11</td>
-                                <td>5.94e-08</td>
+                                <td class="highlight">RSBN1</td>
+                                <td>707</td>
+                                <td>1686</td>
+                                <td>1.90</td>
+                                <td>3.26e-42</td>
+                                <td>0.0000</td>
                             </tr>
                             <tr>
                                 <td>6</td>
-                                <td class="highlight">RSBN1</td>
-                                <td>707</td>
-                                <td>24</td>
-                                <td>3.12</td>
-                                <td>3.91e-11</td>
-                                <td>5.94e-08</td>
+                                <td class="highlight">CACNA1B</td>
+                                <td>3192</td>
+                                <td>11050</td>
+                                <td>1.31</td>
+                                <td>1.31e-38</td>
+                                <td>0.0000</td>
                             </tr>
                             <tr>
                                 <td>7</td>
-                                <td class="highlight">FHAD1</td>
-                                <td>235</td>
-                                <td>1</td>
-                                <td>24.87</td>
-                                <td>1.28e-09</td>
-                                <td>1.66e-06</td>
+                                <td class="highlight">PKDREJ</td>
+                                <td>1574</td>
+                                <td>4958</td>
+                                <td>1.44</td>
+                                <td>8.12e-34</td>
+                                <td>0.0000</td>
                             </tr>
                             <tr>
                                 <td>8</td>
-                                <td class="highlight">IFI44</td>
-                                <td>422</td>
-                                <td>10</td>
-                                <td>4.47</td>
-                                <td>1.70e-09</td>
-                                <td>1.94e-06</td>
+                                <td class="highlight">CLEC4A</td>
+                                <td>261</td>
+                                <td>471</td>
+                                <td>2.50</td>
+                                <td>1.98e-29</td>
+                                <td>0.0000</td>
                             </tr>
                             <tr>
                                 <td>9</td>
-                                <td class="highlight">MAN2B2</td>
-                                <td>185</td>
-                                <td>0</td>
-                                <td>Infinite</td>
-                                <td>8.31e-09</td>
-                                <td>8.43e-06</td>
+                                <td class="highlight">ABCC11</td>
+                                <td>331</td>
+                                <td>702</td>
+                                <td>2.13</td>
+                                <td>3.90e-27</td>
+                                <td>0.0000</td>
                             </tr>
                             <tr>
                                 <td>10</td>
-                                <td class="highlight">NLRP4</td>
-                                <td>239</td>
-                                <td>2</td>
-                                <td>12.65</td>
-                                <td>1.04e-08</td>
-                                <td>9.50e-06</td>
+                                <td class="highlight">BRINP3</td>
+                                <td>269</td>
+                                <td>540</td>
+                                <td>2.25</td>
+                                <td>5.48e-25</td>
+                                <td>0.0000</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1426,8 +1425,125 @@
                 </div>
             </div>
             <div class="slide-footer">
-                <span>Slide 20 of 20</span>
+                <span>Slide 20 of 21</span>
                 <span>Deep Learning Scale</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 21: PGLS Continuous Phenotype Association -->
+        <div class="slide" id="slide-21">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><circle cx="12" cy="12" r="3"/><path d="M16 8l-4 4-2-2-3 3"/></svg>
+                Phenotype Association: Continuous PGLS Screen
+            </h1>
+            <div class="slide-content" style="justify-content: flex-start; overflow: visible;">
+                <div class="grid-2" style="margin-bottom: 15px;">
+                    <div>
+                        <p style="margin-bottom: 12px; font-size: 0.95rem;">We conducted a genome-wide phylogenetic generalized least squares (PGLS) screen to associate terminal branch selection events with simulated body mass (log grams) across species, controlling for phylogenetic covariance (shared ancestry).</p>
+                        <div class="info-card" style="border-left-color: var(--accent-blue); padding: 12px; font-size: 0.9rem; margin-bottom: 8px;">
+                            <strong>Phylogenetic Control:</strong> Reconstructed covariance matrix V and its Cholesky factor L from the 317-species species tree to perform transformation: Y* = L^-1 Y, X* = L^-1 X, and fit OLS.
+                        </div>
+                    </div>
+                    <div>
+                        <div class="info-card" style="border-left-color: var(--accent-purple); padding: 12px; font-size: 0.9rem;">
+                            <strong>PGLS Screen Results:</strong> Analyzed overlapping species. Top hits are corrected for multiple testing using Benjamini-Hochberg FDR.
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto; max-height: 250px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Gene</th>
+                                <th>Selection Events</th>
+                                <th>Slope (b1)</th>
+                                <th>T-statistic</th>
+                                <th>P-value</th>
+                                <th>FDR Q-value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td class="highlight">DAZAP1</td>
+                                <td>5</td>
+                                <td>0.3543</td>
+                                <td>4.531</td>
+                                <td>8.58e-06</td>
+                                <td>0.0826</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td class="highlight">LRRTM4</td>
+                                <td>11</td>
+                                <td>0.2287</td>
+                                <td>4.208</td>
+                                <td>3.43e-05</td>
+                                <td>0.1094</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td class="highlight">ABRACL</td>
+                                <td>1</td>
+                                <td>0.7295</td>
+                                <td>4.195</td>
+                                <td>3.63e-05</td>
+                                <td>0.1094</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td class="highlight">GRM3</td>
+                                <td>6</td>
+                                <td>-0.4997</td>
+                                <td>-4.140</td>
+                                <td>4.54e-05</td>
+                                <td>0.1094</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td class="highlight">FGF13</td>
+                                <td>3</td>
+                                <td>0.4722</td>
+                                <td>4.044</td>
+                                <td>6.73e-05</td>
+                                <td>0.1296</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td class="highlight">CALCA</td>
+                                <td>17</td>
+                                <td>0.1954</td>
+                                <td>3.959</td>
+                                <td>9.45e-05</td>
+                                <td>0.1516</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td class="highlight">ISCU</td>
+                                <td>2</td>
+                                <td>0.6408</td>
+                                <td>3.778</td>
+                                <td>1.91e-04</td>
+                                <td>0.2265</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td class="highlight">GJA1</td>
+                                <td>4</td>
+                                <td>0.4497</td>
+                                <td>3.710</td>
+                                <td>2.48e-04</td>
+                                <td>0.2265</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 21 of 21</span>
+                <span>Continuous PGLS Screen</span>
             </div>
         </div>
 
@@ -1439,7 +1555,7 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
             Previous
         </button>
-        <span id="slide-indicator">Slide 1 of 20</span>
+        <span id="slide-indicator">Slide 1 of 21</span>
         <button class="btn" onclick="nextSlide()">
             Next
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
@@ -1452,7 +1568,7 @@
 
     <script>
         let currentSlide = 1;
-        const totalSlides = 20;
+        const totalSlides = 21;
 
         function updateSlide() {
             document.querySelectorAll('.slide').forEach(slide => {
@@ -1472,6 +1588,15 @@
             // Update Progress Bar
             const percent = ((currentSlide - 1) / (totalSlides - 1)) * 100;
             document.getElementById('progress-bar').style.width = `${percent}%`;
+
+            // Dynamically update slide number footers
+            document.querySelectorAll('.slide').forEach((slide, idx) => {
+                const footerSpan = slide.querySelector('.slide-footer span:first-child');
+                if (footerSpan && footerSpan.textContent.includes('Slide ')) {
+                    const label = footerSpan.textContent.split(' ').slice(3).join(' ');
+                    footerSpan.textContent = `Slide ${idx + 1} of ${totalSlides}${label ? ' - ' + label : ''}`;
+                }
+            });
         }
 
         function nextSlide() {

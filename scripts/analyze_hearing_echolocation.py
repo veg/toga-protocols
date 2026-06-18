@@ -35,20 +35,19 @@ def classify_species(label, node_id):
     """
     Classifies a species as:
       1: Echolocator (Microbats, Odontocetes)
-      0: Canonical Non-Echolocator (Megabats, Mysticetes)
-      None: Excluded (other mammals)
+      0: Background / Non-Echolocator (Megabats, Mysticetes, and all other mammals)
     """
     label_lower = label.lower()
     
     # Extract scientific name (usually inside parentheses, e.g. "black flying fox (Pteropus alecto)")
     match = re.search(r'\(([^)]+)\)', label_lower)
     if not match:
-        return None
+        return 0
         
     sci_name = match.group(1).strip()
     parts = sci_name.split()
     if not parts:
-        return None
+        return 0
     genus = parts[0]  # e.g. "pteropus" or "pteronura"
     
     # 1. Cetaceans (Whales/Dolphins/Porpoises)
@@ -71,7 +70,7 @@ def classify_species(label, node_id):
             return 0  # Megabats (canonical control group)
         return 1  # Microbats (echolocators)
         
-    return None
+    return 0
 
 def main():
     print(f"[*] Connecting to database at '{DB_PATH}'...")
