@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Fonts: Inter and Inter Tight for slate/modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&family=Roboto+Mono&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOGA & MEME: Scaling Comparative Genomics & Selection Screen</title>
     <style>
+        /* Crisp Modern Minimalist Design System */
         :root {
-            --bg-gradient: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #1e1b4b 100%);
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --card-border: rgba(148, 163, 184, 0.1);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-blue: #38bdf8;
-            --accent-green: #34d399;
-            --accent-purple: #a78bfa;
-            --accent-rose: #fb7185;
-            --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.15);
-            --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --bg-color: #FFFFFF;
+            --text-primary: #334155;         /* Soft slate body text */
+            --text-secondary: #475569;       /* Medium slate for secondary text */
+            --primary-color: #0F172A;        /* Deep obsidian/slate for headings */
+            --accent-blue: #2563EB;          /* Royal Blue accent */
+            --accent-green: #059669;         /* Emerald Green accent */
+            --accent-purple: #7C3AED;        /* Purple accent */
+            --accent-rose: #DC2626;          /* Red/Rose accent */
+            --bullet-color: #94A3B8;         /* Clean neutral bullet */
+            --callout-bg: #F8FAFC;           /* Light grey-blue for callouts */
+            --card-bg: #FFFFFF;
+            --card-border: #E2E8F0;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --transition-speed: 0.35s;
         }
 
         * {
@@ -26,169 +34,281 @@
         }
 
         body {
-            font-family: var(--font-family);
-            background: #0b0f19;
-            background-image: var(--bg-gradient);
+            background-color: var(--bg-color);
             color: var(--text-primary);
+            font-family: var(--font-family);
             overflow: hidden;
             height: 100vh;
             display: flex;
             flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Presentation Wrapper */
+        /* Top Progress Indicator */
+        #progress-container {
+            width: 100%;
+            height: 3px;
+            background: #F1F5F9;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent-blue);
+            transition: width var(--transition-speed) ease;
+            box-shadow: none;
+        }
+
+        /* Header Layout */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 80px;
+            border-bottom: 1px solid #F1F5F9;
+            background-color: #FFFFFF;
+            z-index: 5;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748B;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 24px;
+        }
+
+        /* Slide Container */
         #presentation {
-            position: relative;
             flex: 1;
+            position: relative;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            height: 100%;
+            background-color: #FFFFFF;
+            z-index: 1;
         }
 
-        /* Slide Styles */
         .slide {
             position: absolute;
-            width: 90%;
-            max-width: 1280px;
-            height: 85%;
-            max-height: 720px;
-            padding: 40px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), var(--shadow-glow);
-            backdrop-filter: blur(12px);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 60px 80px 40px 80px;
             opacity: 0;
-            transform: translateX(100px) scale(0.95);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
+            transform: translateX(30px);
+            transition: transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1), 
+                        opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            overflow-y: auto;
+            pointer-events: none;
+            z-index: 1;
         }
 
         .slide.active {
             opacity: 1;
-            transform: translateX(0) scale(1);
+            transform: translateX(0);
             pointer-events: auto;
             z-index: 10;
         }
 
         .slide.prev-slide {
+            transform: translateX(-30px);
             opacity: 0;
-            transform: translateX(-100px) scale(0.95);
+        }
+
+        /* Title Slide Layout */
+        .slide.title-slide {
+            background-color: #FFFFFF;
+            padding-left: 100px;
+            border-left: 4px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .slide.title-slide h1 {
+            color: var(--primary-color);
+            font-size: 3.25rem;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            background: none !important;
+            -webkit-text-fill-color: currentcolor !important;
+        }
+
+        .slide.title-slide h2 {
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 45px;
+        }
+
+        .title-presenter {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        .title-meta {
+            font-size: 0.8rem;
+            color: #64748B;
+            margin-top: 8px;
+            font-weight: 400;
         }
 
         /* Typography */
+        h1, h2, h3 {
+            font-family: 'Inter Tight', 'Inter', sans-serif;
+            color: var(--primary-color);
+        }
+
         h1.slide-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(to right, var(--text-primary), var(--accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            background: none !important;
+            -webkit-text-fill-color: currentcolor !important;
             margin-bottom: 20px;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+            border-bottom: 1px solid #F1F5F9 !important;
             padding-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .slide-content {
-            flex: 1;
-            font-size: 1.1rem;
+        p {
+            font-size: 0.95rem;
             line-height: 1.6;
-            color: var(--text-secondary);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .slide-footer {
-            font-size: 0.85rem;
-            color: rgba(148, 163, 184, 0.5);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid rgba(148, 163, 184, 0.05);
-            padding-top: 15px;
-            margin-top: 20px;
-        }
-
-        /* Title Slide Customization */
-        .title-slide {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: radial-gradient(circle at center, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
-        }
-
-        .title-slide h1 {
-            font-size: 3.5rem;
-            line-height: 1.2;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #ffffff 0%, var(--accent-blue) 50%, var(--accent-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .title-slide h2 {
-            font-size: 1.5rem;
             color: var(--text-secondary);
-            margin-bottom: 40px;
             font-weight: 400;
         }
 
-        .meta-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            width: 100%;
-            max-width: 800px;
-            margin-top: 20px;
-        }
-
-        .meta-card {
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            padding: 15px;
-            border-radius: 12px;
-        }
-
-        .meta-card h3 {
-            font-size: 0.9rem;
+        a {
             color: var(--accent-blue);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease;
         }
 
-        .meta-card p {
-            font-size: 1.1rem;
-            color: var(--text-primary);
+        a:hover {
+            border-bottom-color: var(--accent-blue);
         }
 
-        /* Lists and Grids */
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #F1F5F9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: var(--primary-color);
+        }
+
+        /* Bullets */
         ul {
-            list-style-position: inside;
-            margin-bottom: 15px;
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 16px;
         }
 
         li {
-            margin-bottom: 10px;
+            position: relative;
+            padding-left: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--bullet-color);
+            font-weight: 300;
         }
 
         li strong {
-            color: var(--text-primary);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Callouts / Info Cards */
+        .info-card {
+            background-color: var(--callout-bg);
+            border-left: 3px solid var(--accent-blue);
+            border-top: 1px solid var(--card-border);
+            border-right: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
+            padding: 16px 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .info-card h4 {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Cards / Stat boxes */
+        .stat-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.2s ease;
+        }
+
+        .stat-box:hover {
+            border-color: #94A3B8;
+        }
+
+        .stat-val {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
         }
 
         .grid-2 {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
             align-items: center;
         }
 
@@ -198,75 +318,38 @@
             gap: 20px;
         }
 
-        /* Dashboard & Summary Cards */
-        .info-card {
-            background: rgba(15, 23, 42, 0.4);
-            border-left: 4px solid var(--accent-blue);
-            padding: 20px;
-            border-radius: 0 16px 16px 0;
-            margin-bottom: 20px;
-        }
-
-        .info-card h4 {
-            color: var(--text-primary);
-            font-size: 1.2rem;
-            margin-bottom: 8px;
-        }
-
-        .stat-box {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            transition: border-color 0.3s;
-        }
-
-        .stat-box:hover {
-            border-color: rgba(56, 189, 248, 0.3);
-        }
-
-        .stat-val {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--accent-blue);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
         /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
         }
 
         th {
-            background: rgba(15, 23, 42, 0.6);
-            color: var(--text-primary);
+            background: #F8FAFC;
+            color: var(--primary-color);
             font-weight: 600;
             text-align: left;
-            padding: 12px;
-            border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+            padding: 10px 12px;
+            border-bottom: 2px solid var(--card-border);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
         }
 
         td {
-            padding: 10px 12px;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--card-border);
             color: var(--text-secondary);
         }
 
         tr:hover td {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.02);
+            color: var(--primary-color);
+            background: #F8FAFC;
         }
 
-        /* Custom SVGs and Graphs */
+        /* Chart container */
         .chart-container {
             width: 100%;
             height: 100%;
@@ -274,43 +357,48 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(15, 23, 42, 0.3);
-            border: 1px solid rgba(148, 163, 184, 0.08);
-            border-radius: 16px;
+            background: #F8FAFC;
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
             padding: 15px;
         }
 
-        /* Presentation Controls */
+        /* Footer Controls */
         #controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 90%;
-            max-width: 1280px;
-            margin: 15px auto 25px auto;
-            z-index: 100;
+            padding: 20px 80px;
+            border-top: 1px solid #F1F5F9;
+            background-color: #FFFFFF;
+            z-index: 5;
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
         }
 
         .btn {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            color: var(--text-primary);
-            padding: 12px 24px;
-            border-radius: 12px;
+            background-color: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            color: var(--text-secondary);
+            padding: 8px 18px;
+            font-family: var(--font-family);
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             cursor: pointer;
-            font-weight: 600;
+            border-radius: 4px;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.2s;
-            user-select: none;
         }
 
         .btn:hover {
-            background: rgba(56, 189, 248, 0.15);
-            border-color: var(--accent-blue);
-            color: var(--accent-blue);
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+            background-color: #F8FAFC;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
         }
 
         .btn:active {
@@ -318,35 +406,13 @@
         }
 
         #slide-indicator {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            background: rgba(15, 23, 42, 0.5);
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid rgba(148, 163, 184, 0.05);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #64748B;
+            letter-spacing: 0.1em;
         }
 
-        /* Progress Bar */
-        #progress-container {
-            width: 100%;
-            height: 6px;
-            background: rgba(15, 23, 42, 0.5);
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            z-index: 1000;
-        }
-
-        #progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
-            transition: width 0.3s ease;
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
-        }
-
-        /* Key Highlights Accentuation */
+        /* Highlights */
         .highlight {
             color: var(--accent-blue);
             font-weight: 600;
@@ -364,30 +430,29 @@
             font-weight: 600;
         }
 
-        /* Keyboard Help Modal Toggle */
         #help-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            color: var(--text-secondary);
-            width: 36px;
-            height: 36px;
+            top: 15px;
+            right: 15px;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            color: #64748B;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 1000;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: all 0.2s;
         }
 
         #help-btn:hover {
-            color: var(--text-primary);
-            border-color: rgba(148, 163, 184, 0.3);
-            background: rgba(30, 41, 59, 0.8);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background: #F8FAFC;
         }
 
         #help-modal {
@@ -396,40 +461,44 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(15, 23, 42, 0.95);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 20px;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
             padding: 30px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
             z-index: 10000;
-            backdrop-filter: blur(10px);
             max-width: 400px;
             width: 90%;
+            color: var(--text-primary);
         }
 
         #help-modal h3 {
             margin-bottom: 15px;
-            color: var(--accent-blue);
-        }
-
-        #help-modal ul {
-            list-style: none;
+            color: var(--primary-color);
+            font-size: 1.1rem;
         }
 
         #help-modal li {
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            border-bottom: 1px solid #F1F5F9;
             padding-bottom: 5px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        #help-modal li::before {
+            display: none;
         }
 
         #help-modal kbd {
-            background: #334155;
+            background: #F1F5F9;
             padding: 2px 6px;
             border-radius: 4px;
-            border: 1px solid #475569;
-            font-size: 0.85rem;
+            border: 1px solid #E2E8F0;
+            font-size: 0.8rem;
+            color: var(--primary-color);
         }
 
         #help-overlay {
@@ -439,12 +508,122 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.4);
             z-index: 9999;
         }
-    </style>
+
+        /* Slide Footer Styles */
+        .slide-footer {
+            font-size: 0.8rem;
+            color: #64748B;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #F1F5F9;
+            padding-top: 12px;
+            margin-top: 20px;
+        }
+
+        .title-branding {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            align-items: center;
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            width: fit-content;
+            border: none;
+            box-shadow: none;
+        }
+
+        .title-branding-sep {
+            color: #E2E8F0;
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* Meta cards for Title Slide */
+        .meta-grid {
+            display: flex;
+            gap: 24px;
+            width: auto;
+            max-width: none;
+            margin-top: 30px;
+        }
+
+        .meta-card {
+            background: none;
+            border: none;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        .meta-card h3 {
+            font-size: 0.75rem;
+            color: #64748B;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .meta-card p {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        /* Responsive layout for smaller heights/screens */
+        @media (max-height: 850px) {
+            .slide {
+                padding: 45px 60px 25px 60px;
+            }
+            header, #controls {
+                padding: 12px 60px;
+            }
+        }
+        @media (max-height: 720px) {
+            .slide {
+                padding: 35px 40px 20px 40px;
+            }
+            header, #controls {
+                padding: 8px 40px;
+            }
+            h1.slide-title {
+                font-size: 1.4rem;
+                margin-bottom: 8px;
+            }
+            p {
+                font-size: 0.85rem;
+                margin-bottom: 12px;
+                line-height: 1.45;
+            }
+            .info-card {
+                padding: 10px 14px;
+            }
+            .info-card h4 {
+                margin-bottom: 4px;
+                font-size: 0.775rem;
+            }
+            .info-card p {
+                font-size: 0.75rem;
+                line-height: 1.4;
+            }
+        }
+</style>
 </head>
 <body>
+    <!-- Header containing context -->
+    <header>
+        <div class="header-left">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle; margin-right: 8px; color: var(--accent-blue);"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span class="header-title">TOGA & MEME Research | Selection Surveillance</span>
+        </div>
+        <div class="header-right">
+            <span class="header-title" style="color: var(--primary-color);">Scaling Comparative Genomics & Selection Screens</span>
+        </div>
+    </header>
 
     <button id="help-btn" onclick="toggleHelp()">?</button>
 
@@ -579,12 +758,12 @@
                     <div class="chart-container">
                         <!-- Custom CSS/SVG Pie Chart showing alignment quality proportions -->
                         <svg width="220" height="220" viewBox="0 0 36 36">
-                            <circle cx="18" cy="18" r="15.915" fill="none" stroke="#1e293b" stroke-width="3"></circle>
+                            <circle cx="18" cy="18" r="15.915" fill="none" stroke="#E2E8F0" stroke-width="3"></circle>
                             <circle cx="18" cy="18" r="15.915" fill="none" stroke="var(--accent-blue)" stroke-width="3.5" stroke-dasharray="91.5 8.5" stroke-dashoffset="25"></circle>
                             <circle cx="18" cy="18" r="15.915" fill="none" stroke="var(--accent-rose)" stroke-width="3.5" stroke-dasharray="7.6 92.4" stroke-dashoffset="33.5"></circle>
                             <circle cx="18" cy="18" r="15.915" fill="none" stroke="var(--accent-purple)" stroke-width="3.5" stroke-dasharray="0.9 99.1" stroke-dashoffset="41.1"></circle>
                             <g class="chart-text">
-                                <text x="18" y="17" text-anchor="middle" fill="white" font-size="4" font-weight="bold">18,274</text>
+                                <text x="18" y="17" text-anchor="middle" fill="var(--primary-color)" font-size="4" font-weight="bold">18,274</text>
                                 <text x="18" y="22" text-anchor="middle" fill="var(--text-secondary)" font-size="2.5">Passed QC (91.5%)</text>
                             </g>
                         </svg>
@@ -667,7 +846,7 @@
                                     <span>Echolocating (110 species)</span>
                                     <span class="highlight">411,386 (18.1%)</span>
                                 </div>
-                                <div style="width: 100%; height: 24px; background:#1e293b; border-radius:12px; overflow:hidden;">
+                                <div style="width: 100%; height: 24px; background:#E2E8F0; border-radius:12px; overflow:hidden;">
                                     <div style="width: 18.1%; height: 100%; background: linear-gradient(to right, #38bdf8, #a78bfa); border-radius:12px;"></div>
                                 </div>
                             </div>
@@ -676,7 +855,7 @@
                                     <span>Background (632 species)</span>
                                     <span class="highlight-purple">1,858,010 (81.9%)</span>
                                 </div>
-                                <div style="width: 100%; height: 24px; background:#1e293b; border-radius:12px; overflow:hidden;">
+                                <div style="width: 100%; height: 24px; background:#E2E8F0; border-radius:12px; overflow:hidden;">
                                     <div style="width: 81.9%; height: 100%; background: #a78bfa; border-radius:12px;"></div>
                                 </div>
                             </div>
@@ -1336,7 +1515,7 @@
                                     <span>Rodentia (Large Ne)</span>
                                     <span class="highlight-green">0.100</span>
                                 </div>
-                                <div style="width:100%; height:16px; background:#1e293b; border-radius:8px; overflow:hidden;">
+                                <div style="width:100%; height:16px; background:#E2E8F0; border-radius:8px; overflow:hidden;">
                                     <div style="width: 40%; height:100%; background:var(--accent-green); border-radius:8px;"></div>
                                 </div>
                             </div>
@@ -1345,7 +1524,7 @@
                                     <span>Chiroptera (Large Ne)</span>
                                     <span class="highlight-green">0.115</span>
                                 </div>
-                                <div style="width:100%; height:16px; background:#1e293b; border-radius:8px; overflow:hidden;">
+                                <div style="width:100%; height:16px; background:#E2E8F0; border-radius:8px; overflow:hidden;">
                                     <div style="width: 46%; height:100%; background:var(--accent-green); border-radius:8px;"></div>
                                 </div>
                             </div>
@@ -1354,7 +1533,7 @@
                                     <span>Primates (Small Ne)</span>
                                     <span class="highlight-rose">0.143</span>
                                 </div>
-                                <div style="width:100%; height:16px; background:#1e293b; border-radius:8px; overflow:hidden;">
+                                <div style="width:100%; height:16px; background:#E2E8F0; border-radius:8px; overflow:hidden;">
                                     <div style="width: 57%; height:100%; background:var(--accent-rose); border-radius:8px;"></div>
                                 </div>
                             </div>
@@ -1363,7 +1542,7 @@
                                     <span>Cetacea (Small Ne)</span>
                                     <span class="highlight-rose">0.197</span>
                                 </div>
-                                <div style="width:100%; height:16px; background:#1e293b; border-radius:8px; overflow:hidden;">
+                                <div style="width:100%; height:16px; background:#E2E8F0; border-radius:8px; overflow:hidden;">
                                     <div style="width: 79%; height:100%; background:var(--accent-rose); border-radius:8px;"></div>
                                 </div>
                             </div>
@@ -1401,12 +1580,12 @@
                         <h4 style="color:var(--text-primary); margin-bottom:10px; font-size:0.95rem;">Shared Selected Sites (Observed vs Expected)</h4>
                         <!-- Custom visual representation of permutation overlap results -->
                         <svg width="220" height="150" viewBox="0 0 200 120">
-                            <rect x="20" y="30" width="160" height="20" rx="10" fill="#1e293b"/>
+                            <rect x="20" y="30" width="160" height="20" rx="10" fill="#E2E8F0"/>
                             <!-- Expected shared bar -->
                             <rect x="20" y="30" width="151" height="20" rx="10" fill="var(--accent-blue)"/>
                             <text x="140" y="22" fill="var(--accent-blue)" font-size="8" font-weight="bold">Expected (94.36%)</text>
                             
-                            <rect x="20" y="75" width="160" height="20" rx="10" fill="#1e293b"/>
+                            <rect x="20" y="75" width="160" height="20" rx="10" fill="#E2E8F0"/>
                             <!-- Observed shared bar -->
                             <rect x="20" y="75" width="147" height="20" rx="10" fill="var(--accent-rose)"/>
                             <text x="140" y="67" fill="var(--accent-rose)" font-size="8" font-weight="bold">Observed (91.84%)</text>
