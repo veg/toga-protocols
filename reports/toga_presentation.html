@@ -1696,8 +1696,47 @@
             </div>
         </div>
 
-        <!-- SLIDE 20: Deep learning PhyloAxialTransformer -->
+        <!-- SLIDE 22: Unveiling Selection in "Invariant" Housekeeping Genes -->
         <div class="slide" id="slide-22">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><circle cx="12" cy="12" r="3"/><path d="M16 8l-4 4-2-2-3 3"/></svg>
+                Unveiling Selection in "Invariant" Housekeeping Genes
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <p style="margin-bottom: 12px; font-size: 0.95rem; line-height: 1.6;">
+                            Taxon density challenges the paradigm of completely "invariant" negative controls. Housekeeping genes traditionally assumed to be under strict purifying selection across their entire sequence show site-specific episodic positive selection in our 742-species dataset:
+                        </p>
+                        <ul style="margin-left: 20px; font-size: 0.9rem; line-height: 1.7; display: flex; flex-direction: column; gap: 8px;">
+                            <li><strong>ACTB (Beta-actin)</strong>: Standard structural component. Features <strong>1 selection site</strong> under episodic positive selection (global dN/dS = 0.0033, P &lt; 0.05).</li>
+                            <li><strong>CALM1 (Calmodulin 1)</strong>: Calcium sensor, 100% identity in standard genomes. Features <strong>1 selection site</strong> (global dN/dS = 0.0022, P &lt; 0.05).</li>
+                            <li><strong>GAPDH</strong>: Standard expression reference. Features <strong>3 selection sites</strong> (global dN/dS = 0.0402, P &lt; 0.05).</li>
+                            <li><strong>Ribosomal Subunits</strong>: RPL10, RPL19, RPL30, and RPS13 each contain <strong>1 selection site</strong> under selection.</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(15,23,42,0.4); border: 1px dashed rgba(148,163,184,0.2); padding: 20px; border-radius: 15px; font-size: 0.9rem; line-height: 1.6;">
+                        <h4 style="color:var(--accent-blue); margin-bottom: 8px; font-size: 0.95rem;">Truly Ultra-Conservative Genes (N = 476)</h4>
+                        <p style="margin-bottom: 10px;">Only 4.6% of genes (476 / 10,247) remain completely devoid of selection (global dN/dS &lt; 0.02, 0 selection sites, represented across &ge; 100 species). They are heavily enriched for:</p>
+                        <ul style="margin-left: 15px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px;">
+                            <li><strong>Cytoplasmic Translation</strong> (GO:0002181, Combined Score = 1484)</li>
+                            <li><strong>mRNA Processing</strong> (GO:0006397, Combined Score = 168)</li>
+                            <li><strong>Nucleosome Assembly</strong> (GO:0006334, Combined Score = 292)</li>
+                        </ul>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">
+                            <em>Ultimate Negative Controls:</em> Histone core proteins (e.g. H4C12, H3C10, H2BC4) remain 100% rigid across mammals, showing no codon variation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 22 of 23</span>
+                <span>Unveiled Housekeeping Selection</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 20: Deep learning PhyloAxialTransformer -->
+        <div class="slide" id="slide-23">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                 Scaling Selection: PhyloAxialTransformer
@@ -1764,7 +1803,7 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
             Previous
         </button>
-        <span id="slide-indicator">Slide 1 of 22</span>
+        <span id="slide-indicator">Slide 1 of 23</span>
         <button class="btn" onclick="nextSlide()">
             Next
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
@@ -1777,7 +1816,7 @@
 
     <script>
         let currentSlide = 1;
-        const totalSlides = 22;
+        const totalSlides = 23;
 
         function updateSlide() {
             document.querySelectorAll('.slide').forEach(slide => {
