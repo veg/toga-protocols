@@ -849,8 +849,107 @@
             </div>
         </div>
 
-        <!-- SLIDE 9: Taxon Density Power gains -->
+        <!-- SLIDE 9: PGLS Continuous Phenotype Association -->
         <div class="slide" id="slide-9">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><circle cx="12" cy="12" r="3"/><path d="M16 8l-4 4-2-2-3 3"/></svg>
+                Continuous Phenotype Association: PGLS Screen & Interpretation
+            </h1>
+            <div class="slide-content" style="justify-content: flex-start; overflow-y: auto;">
+                <div class="grid-2" style="gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <p style="margin-bottom: 12px; font-size: 0.9rem; line-height: 1.6;">
+                            We conducted a genome-wide <strong>Phylogenetic Generalized Least Squares (PGLS)</strong> screen to associate terminal branch selection events with simulated body mass (log grams) across species, controlling for phylogenetic covariance (shared ancestry).
+                        </p>
+                        <div class="info-card" style="border-left-color: var(--accent-blue); padding: 10px 15px; font-size: 0.85rem; margin-bottom: 10px;">
+                            <strong>Phylogenetic Transform:</strong> Reconstructed patristic distance covariance matrix V and Cholesky factor L from 317 mammals. Transformed variables: Y* = L^-1 Y, X* = L^-1 X, and fit OLS.
+                        </div>
+                        
+                        <div style="overflow-x: auto; max-height: 180px;">
+                            <table style="font-size: 0.8rem; width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Gene</th>
+                                        <th>Events</th>
+                                        <th>Slope</th>
+                                        <th>T-stat</th>
+                                        <th>P-val</th>
+                                        <th>FDR Q</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="highlight">DAZAP1</td>
+                                        <td>5</td>
+                                        <td>0.354</td>
+                                        <td>4.53</td>
+                                        <td>8.58e-6</td>
+                                        <td>0.083</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="highlight">LRRTM4</td>
+                                        <td>11</td>
+                                        <td>0.229</td>
+                                        <td>4.21</td>
+                                        <td>3.43e-5</td>
+                                        <td>0.109</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="highlight">ABRACL</td>
+                                        <td>1</td>
+                                        <td>0.730</td>
+                                        <td>4.20</td>
+                                        <td>3.63e-5</td>
+                                        <td>0.109</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="highlight">GRM3</td>
+                                        <td>6</td>
+                                        <td>-0.500</td>
+                                        <td>-4.14</td>
+                                        <td>4.54e-5</td>
+                                        <td>0.109</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="highlight">FGF13</td>
+                                        <td>3</td>
+                                        <td>0.472</td>
+                                        <td>4.04</td>
+                                        <td>6.73e-5</td>
+                                        <td>0.130</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(15,23,42,0.4); border: 1px solid rgba(148,163,184,0.1); padding: 15px; border-radius: 15px; font-size: 0.85rem; line-height: 1.6;">
+                        <h4 style="color:var(--accent-purple); margin-bottom:8px; font-size: 0.95rem;">Biological Interpretation of Top Hits:</h4>
+                        <ul style="margin-left: 15px; display: flex; flex-direction: column; gap: 8px;">
+                            <li>
+                                <strong>DAZAP1</strong> (DAZ Associated Protein 1, Slope = 0.354): Crucial RNA-binding protein mediating spermatogenesis and growth dynamics. Positive selection on larger body size lineages suggests adaptation of development rate and reproductive lifespan scaling.
+                            </li>
+                            <li>
+                                <strong>LRRTM4</strong> (Leucine Rich Repeat Transmembrane 4, Slope = 0.229): Synaptic cell adhesion molecule regulating neural wiring. Selection on larger body mass lines indicates structural neural adjustments during brain-body allometric scaling.
+                            </li>
+                            <li>
+                                <strong>GRM3</strong> (Metabotropic Glutamate Receptor 3, Slope = -0.500): Selection associated with smaller body sizes, suggesting neuro-metabolic modifications to support higher relative mass-specific metabolic rates in smaller mammals.
+                            </li>
+                            <li>
+                                <strong>FGF13</strong> (Fibroblast Growth Factor 13, Slope = 0.472): Direct role in microtubule stabilization and cardiac/neural development; adapts cellular growth processes to larger physical mass constraints.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 9 of 21</span>
+                <span>Continuous PGLS Screen</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: Taxon Density Power gains -->
+        <div class="slide" id="slide-10">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><circle cx="12" cy="12" r="3"/></svg>
                 Taxon Density as a Power Multiplier
@@ -886,7 +985,7 @@
         </div>
 
         <!-- SLIDE 10: Radical Shifts Case 1 (ARID1B) -->
-        <div class="slide" id="slide-10">
+        <div class="slide" id="slide-11">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 Radical Selection Shifts: ARID1B
@@ -919,7 +1018,7 @@
         </div>
 
         <!-- SLIDE 11: Radical Shifts Case 2 (ARHGAP23) -->
-        <div class="slide" id="slide-11">
+        <div class="slide" id="slide-12">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 Radical Selection Shifts: ARHGAP23
@@ -952,7 +1051,7 @@
         </div>
 
         <!-- SLIDE 12: Radical Shifts Case 3 (CABLES1) -->
-        <div class="slide" id="slide-12">
+        <div class="slide" id="slide-13">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 Radical Selection Shifts: CABLES1
@@ -985,7 +1084,7 @@
         </div>
 
         <!-- SLIDE 13: New Genomes Introduction -->
-        <div class="slide" id="slide-13">
+        <div class="slide" id="slide-14">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 New Genomes Contribution
@@ -1022,7 +1121,7 @@
         </div>
 
         <!-- SLIDE 14: New Genomes Table -->
-        <div class="slide" id="slide-14">
+        <div class="slide" id="slide-15">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 Top Recently Sequenced Contributors
@@ -1125,7 +1224,7 @@
         </div>
 
         <!-- SLIDE 15: Hypothesis 1 Intro -->
-        <div class="slide" id="slide-15">
+        <div class="slide" id="slide-16">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 Hypothesis 1: Population Size & Purifying Selection
@@ -1159,7 +1258,7 @@
         </div>
 
         <!-- SLIDE 16: Hypothesis 1 Method -->
-        <div class="slide" id="slide-16">
+        <div class="slide" id="slide-17">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                 Hypothesis 1: Controlling for Branch Length Bias
@@ -1208,7 +1307,7 @@
         </div>
 
         <!-- SLIDE 17: Hypothesis 1 Results -->
-        <div class="slide" id="slide-17">
+        <div class="slide" id="slide-18">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z"/></svg>
                 Hypothesis 1 Results: Purifying Selection Constraint
@@ -1279,7 +1378,7 @@
         </div>
 
         <!-- SLIDE 18: Hypothesis 2 Clade shifts -->
-        <div class="slide" id="slide-18">
+        <div class="slide" id="slide-19">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                 Hypothesis 2: Dynamic Selection Clade-Shifts
@@ -1326,7 +1425,7 @@
         </div>
 
         <!-- SLIDE 19: Hypothesis 3 Saturation -->
-        <div class="slide" id="slide-19">
+        <div class="slide" id="slide-20">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
                 Hypothesis 3: Diminishing Returns & Saturation
@@ -1373,7 +1472,7 @@
         </div>
 
         <!-- SLIDE 20: Deep learning PhyloAxialTransformer -->
-        <div class="slide" id="slide-20">
+        <div class="slide" id="slide-21">
             <h1 class="slide-title">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                 Scaling Selection: PhyloAxialTransformer
@@ -1430,122 +1529,7 @@
             </div>
         </div>
 
-        <!-- SLIDE 21: PGLS Continuous Phenotype Association -->
-        <div class="slide" id="slide-21">
-            <h1 class="slide-title">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><circle cx="12" cy="12" r="3"/><path d="M16 8l-4 4-2-2-3 3"/></svg>
-                Phenotype Association: Continuous PGLS Screen
-            </h1>
-            <div class="slide-content" style="justify-content: flex-start; overflow: visible;">
-                <div class="grid-2" style="margin-bottom: 15px;">
-                    <div>
-                        <p style="margin-bottom: 12px; font-size: 0.95rem;">We conducted a genome-wide phylogenetic generalized least squares (PGLS) screen to associate terminal branch selection events with simulated body mass (log grams) across species, controlling for phylogenetic covariance (shared ancestry).</p>
-                        <div class="info-card" style="border-left-color: var(--accent-blue); padding: 12px; font-size: 0.9rem; margin-bottom: 8px;">
-                            <strong>Phylogenetic Control:</strong> Reconstructed covariance matrix V and its Cholesky factor L from the 317-species species tree to perform transformation: Y* = L^-1 Y, X* = L^-1 X, and fit OLS.
-                        </div>
-                    </div>
-                    <div>
-                        <div class="info-card" style="border-left-color: var(--accent-purple); padding: 12px; font-size: 0.9rem;">
-                            <strong>PGLS Screen Results:</strong> Analyzed overlapping species. Top hits are corrected for multiple testing using Benjamini-Hochberg FDR.
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="overflow-x: auto; max-height: 250px;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Gene</th>
-                                <th>Selection Events</th>
-                                <th>Slope (b1)</th>
-                                <th>T-statistic</th>
-                                <th>P-value</th>
-                                <th>FDR Q-value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td class="highlight">DAZAP1</td>
-                                <td>5</td>
-                                <td>0.3543</td>
-                                <td>4.531</td>
-                                <td>8.58e-06</td>
-                                <td>0.0826</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td class="highlight">LRRTM4</td>
-                                <td>11</td>
-                                <td>0.2287</td>
-                                <td>4.208</td>
-                                <td>3.43e-05</td>
-                                <td>0.1094</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td class="highlight">ABRACL</td>
-                                <td>1</td>
-                                <td>0.7295</td>
-                                <td>4.195</td>
-                                <td>3.63e-05</td>
-                                <td>0.1094</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td class="highlight">GRM3</td>
-                                <td>6</td>
-                                <td>-0.4997</td>
-                                <td>-4.140</td>
-                                <td>4.54e-05</td>
-                                <td>0.1094</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td class="highlight">FGF13</td>
-                                <td>3</td>
-                                <td>0.4722</td>
-                                <td>4.044</td>
-                                <td>6.73e-05</td>
-                                <td>0.1296</td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td class="highlight">CALCA</td>
-                                <td>17</td>
-                                <td>0.1954</td>
-                                <td>3.959</td>
-                                <td>9.45e-05</td>
-                                <td>0.1516</td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td class="highlight">ISCU</td>
-                                <td>2</td>
-                                <td>0.6408</td>
-                                <td>3.778</td>
-                                <td>1.91e-04</td>
-                                <td>0.2265</td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td class="highlight">GJA1</td>
-                                <td>4</td>
-                                <td>0.4497</td>
-                                <td>3.710</td>
-                                <td>2.48e-04</td>
-                                <td>0.2265</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="slide-footer">
-                <span>Slide 21 of 21</span>
-                <span>Continuous PGLS Screen</span>
-            </div>
-        </div>
+        
 
     </div>
 
