@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOGA & MEME: Scaling Comparative Genomics & Selection Screen</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #1e1b4b 100%);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(148, 163, 184, 0.1);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #34d399;
+            --accent-purple: #a78bfa;
+            --accent-rose: #fb7185;
+            --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.15);
+            --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: #0b0f19;
+            background-image: var(--bg-gradient);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Presentation Wrapper */
+        #presentation {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Slide Styles */
+        .slide {
+            position: absolute;
+            width: 90%;
+            max-width: 1280px;
+            height: 85%;
+            max-height: 720px;
+            padding: 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            transform: translateX(100px) scale(0.95);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        .slide.prev-slide {
+            opacity: 0;
+            transform: translateX(-100px) scale(0.95);
+        }
+
+        /* Typography */
+        h1.slide-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--text-primary), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slide-content {
+            flex: 1;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-footer {
+            font-size: 0.85rem;
+            color: rgba(148, 163, 184, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(148, 163, 184, 0.05);
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+
+        /* Title Slide Customization */
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+        }
+
+        .title-slide h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent-blue) 50%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .title-slide h2 {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+        .meta-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .meta-card h3 {
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .meta-card p {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        /* Lists and Grids */
+        ul {
+            list-style-position: inside;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        li strong {
+            color: var(--text-primary);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        /* Dashboard & Summary Cards */
+        .info-card {
+            background: rgba(15, 23, 42, 0.4);
+            border-left: 4px solid var(--accent-blue);
+            padding: 20px;
+            border-radius: 0 16px 16px 0;
+            margin-bottom: 20px;
+        }
+
+        .info-card h4 {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-box {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        .stat-box:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+
+        .stat-val {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            color: var(--text-secondary);
+        }
+
+        tr:hover td {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Custom SVGs and Graphs */
+        .chart-container {
+            width: 100%;
+            height: 100%;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(148, 163, 184, 0.08);
+            border-radius: 16px;
+            padding: 15px;
+        }
+
+        /* Presentation Controls */
+        #controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            max-width: 1280px;
+            margin: 15px auto 25px auto;
+            z-index: 100;
+        }
+
+        .btn {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .btn:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        #slide-indicator {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: rgba(15, 23, 42, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.05);
+        }
+
+        /* Progress Bar */
+        #progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(15, 23, 42, 0.5);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+
+        /* Key Highlights Accentuation */
+        .highlight {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+        .highlight-green {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+        .highlight-purple {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+        .highlight-rose {
+            color: var(--accent-rose);
+            font-weight: 600;
+        }
+
+        /* Keyboard Help Modal Toggle */
+        #help-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+
+        #help-btn:hover {
+            color: var(--text-primary);
+            border-color: rgba(148, 163, 184, 0.3);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        #help-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        #help-modal h3 {
+            margin-bottom: 15px;
+            color: var(--accent-blue);
+        }
+
+        #help-modal ul {
+            list-style: none;
+        }
+
+        #help-modal li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            padding-bottom: 5px;
+        }
+
+        #help-modal kbd {
+            background: #334155;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #475569;
+            font-size: 0.85rem;
+        }
+
+        #help-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="help-btn" onclick="toggleHelp()">?</button>
+
+    <div id="help-overlay" onclick="toggleHelp()"></div>
+    <div id="help-modal">
+        <h3>Keyboard Navigation</h3>
+        <ul>
+            <li><span>Next Slide</span> <kbd>→</kbd> or <kbd>Space</kbd></li>
+            <li><span>Previous Slide</span> <kbd>←</kbd> or <kbd>Shift + Space</kbd></li>
+            <li><span>First Slide</span> <kbd>Home</kbd></li>
+            <li><span>Last Slide</span> <kbd>End</kbd></li>
+            <li><span>Toggle Fullscreen</span> <kbd>F</kbd></li>
+            <li><span>Close Help</span> <kbd>Esc</kbd></li>
+        </ul>
+    </div>
+
+    <!-- Presentation Viewport -->
+    <div id="presentation">
+
+        <!-- SLIDE 1: Title -->
+        <div class="slide title-slide active" id="slide-1">
+            <div>
+                <span style="color: var(--accent-blue); text-transform: uppercase; letter-spacing: 3px; font-weight: 700; font-size: 0.9rem;">Genome-Wide Evolutionary Scan</span>
+                <h1 style="margin-top: 10px;">Scaling Comparative Genomics & Selection Screen</h1>
+                <h2>Key Findings Across 10,511 Mammalian Genes & 742 Genomes</h2>
+            </div>
+            
+            <div class="meta-grid">
+                <div class="meta-card">
+                    <h3>Dataset Scale</h3>
+                    <p>742 Mammalian Genomes</p>
+                </div>
+                <div class="meta-card">
+                    <h3>Tested Features</h3>
+                    <p>164 Million Substitutions</p>
+                </div>
+                <div class="meta-card">
+                    <h3>Database Size</h3>
+                    <p>17 GB sqlite (MEME & aBSREL)</p>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>Presenter: TOGA/HyPhy Research Team</span>
+                <span>June 2026</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Objectives -->
+        <div class="slide" id="slide-2">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Project Overview & Objectives
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <div class="info-card" style="border-left-color: var(--accent-purple);">
+                            <h4>Comparative Genomics at Scale</h4>
+                            <p>Analyzing whole-genome alignments generated by the <strong>TOGA (Tool for Genome Alignment)</strong> pipeline to discover loci under selection across mammalia.</p>
+                        </div>
+                        <div class="info-card" style="border-left-color: var(--accent-green);">
+                            <h4>Screening Selection Events</h4>
+                            <p>Using site-level (<strong>MEME</strong>) and branch-level (<strong>aBSREL</strong>) statistics to pinpoint transient and lineages-specific adaptive shifts.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--text-primary); margin-bottom: 15px;">Three Evolutionary Aims:</h4>
+                        <ul style="margin-left: 20px; color: var(--text-secondary);">
+                            <li style="margin-bottom: 15px;"><strong>Aim 1: Population Size & Purifying Selection</strong><br>Test if clades with large effective population sizes ($N_e$) show stronger constraint (lower $dN/dS$).</li>
+                            <li style="margin-bottom: 15px;"><strong>Aim 2: Dynamic Selection Hotspots</strong><br>Verify whether positive selection targeting is conserved or shifts across clades.</li>
+                            <li style="margin-bottom: 15px;"><strong>Aim 3: Taxon Sampling Return Curve</strong><br>Analyze how species density in alignments affects statistical power.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 2 of 18</span>
+                <span>TOGA/HyPhy Selection Screen</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Data Pipeline -->
+        <div class="slide" id="slide-3">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+                Database Curation & Processing
+            </h1>
+            <div class="slide-content">
+                <div class="grid-3" style="margin-bottom: 30px;">
+                    <div class="stat-box">
+                        <div class="stat-val">10,511</div>
+                        <div class="stat-label">Mammalian Genes Scanned</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val">2.30M</div>
+                        <div class="stat-label">Genome-wide Selection Substitutions</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val">17 GB</div>
+                        <div class="stat-label">SQLite Results Database</div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <h4>Computational Strategy</h4>
+                    <p>To screen selection events genome-wide, we compiled codon statistics in SQLite. Selection calls were defined as non-synonymous changes occurring on terminal leaf branches with a site-level positive selection p-value $P < 0.05$ (using HyPhy MEME). Benjamini-Hochberg False Discovery Rate (FDR) correction controls error rates at $Q \le 0.05$.</p>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 3 of 18</span>
+                <span>Database Infrastructure</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Dashboard -->
+        <div class="slide" id="slide-4">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+                Alignment Curation & QC Dashboard
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <p style="margin-bottom: 15px;">Denser genomic sampling brings alignment challenges. We developed a custom curation dashboard to prune sub-par alignments, resolving critical errors:</p>
+                        <ul style="margin-left: 20px; margin-bottom: 20px;">
+                            <li><strong>Phylotree Layout Crash</strong>: Fixed CDNs to properly load jQuery, Underscore, and D3 v3.5.17 dependencies, enabling tree visualization.</li>
+                            <li><strong>Undefined Taxa Accessions</strong>: Merged species taxonomies with NCBI accession catalogs on the species key, resolving undefined variables.</li>
+                        </ul>
+                        <div class="info-card" style="border-left-color: var(--accent-rose);">
+                            <h4>Pre- vs. Post-Filtering QC Stats:</h4>
+                            <p>Out of <strong>19,953</strong> original genes, <strong>1,519</strong> were filtered as outlier-heavy alignments, and <strong>160</strong> were flagged as too small (N < 3 sequences), yielding <strong>18,274</strong> curated alignments for screening.</p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <!-- Custom CSS/SVG Pie Chart showing alignment quality proportions -->
+                        <svg width="220" height="220" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="15.915" fill="none" stroke="#1e293b" stroke-width="3"></circle>
+                            <circle cx="18" cy="18" r="15.915" fill="none" stroke="var(--accent-blue)" stroke-width="3.5" stroke-dasharray="91.5 8.5" stroke-dashoffset="25"></circle>
+                            <circle cx="18" cy="18" r="15.915" fill="none" stroke="var(--accent-rose)" stroke-width="3.5" stroke-dasharray="7.6 92.4" stroke-dashoffset="33.5"></circle>
+                            <circle cx="18" cy="18" r="15.915" fill="none" stroke="var(--accent-purple)" stroke-width="3.5" stroke-dasharray="0.9 99.1" stroke-dashoffset="41.1"></circle>
+                            <g class="chart-text">
+                                <text x="18" y="17" text-anchor="middle" fill="white" font-size="4" font-weight="bold">18,274</text>
+                                <text x="18" y="22" text-anchor="middle" fill="var(--text-secondary)" font-size="2.5">Passed QC (91.5%)</text>
+                            </g>
+                        </svg>
+                        <div style="margin-left: 20px; font-size: 0.9rem; line-height: 1.8;">
+                            <div><span style="display:inline-block; width:12px; height:12px; background:var(--accent-blue); margin-right:5px; border-radius:3px;"></span> Passed (91.5%)</div>
+                            <div><span style="display:inline-block; width:12px; height:12px; background:var(--accent-rose); margin-right:5px; border-radius:3px;"></span> Outliers (7.6%)</div>
+                            <div><span style="display:inline-block; width:12px; height:12px; background:var(--accent-purple); margin-right:5px; border-radius:3px;"></span> Too few seq (0.9%)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 4 of 18</span>
+                <span>Alignment Quality Control</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Echolocation screen intro -->
+        <div class="slide" id="slide-5">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Echolocation Selection Screen
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <p style="margin-bottom: 15px;">We set up an evolutionary association screen to detect genes where positive selection is enriched on terminal branches of echolocating lineages versus control lineages.</p>
+                        <div class="info-card">
+                            <h4>Target Lineages ($N = 110$ species)</h4>
+                            <p><strong>Bats</strong>: Yangochiroptera & Yinpterochiroptera (excluding megabats).<br>
+                            <strong>Toothed Whales</strong>: 26 odontocete genera (e.g. <em>Tursiops</em>, <em>Phocoena</em>, <em>Physeter</em>).</p>
+                        </div>
+                        <div class="info-card" style="border-left-color: var(--accent-purple);">
+                            <h4>Control Lineages ($N = 28$ species)</h4>
+                            <p><strong>Megabats</strong>: Non-echolocating Pteropodidae (e.g., <em>Pteropus</em>, <em>Rousettus</em>).<br>
+                            <strong>Baleen Whales</strong>: 6 non-echolocating mysticete genera (e.g., <em>Balaenoptera</em>, <em>Megaptera</em>).</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--text-primary); margin-bottom: 12px;">Methodological Details:</h4>
+                        <ul style="margin-left: 20px; line-height: 1.8;">
+                            <li><strong>Synonymous Control</strong>: Filtered out synonymous mutations (only non-synonymous selection tracked).</li>
+                            <li><strong>Taxonomy Mapping</strong>: Integrated genus-based checks to prevent taxonomic misclassifications.</li>
+                            <li><strong>Branch Control</strong>: Restricted selection calls to leaf branches (representing active, extant phenotypes).</li>
+                            <li><strong>Statistical Test</strong>: Fisher's Exact Test per gene, with Benjamini-Hochberg FDR correction.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 5 of 18</span>
+                <span>Echolocation Methodology</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Echolocation Stats -->
+        <div class="slide" id="slide-6">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                Echolocation Screen Statistics
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <div class="stat-box" style="margin-bottom: 20px;">
+                            <div class="stat-val">459,832</div>
+                            <div class="stat-label">Positive Selection Substitutions on Study Lineages</div>
+                        </div>
+                        <ul style="margin-left: 20px; line-height: 1.8;">
+                            <li><strong>Echolocators</strong>: 415,844 positive selection events</li>
+                            <li><strong>Controls</strong>: 43,988 positive selection events</li>
+                            <li><strong>Echolocator-to-Control Ratio</strong>: <span class="highlight">~9.45 : 1</span></li>
+                            <li><em>Note:</em> The ratio reflects the larger branch subset of echolocators, which is statistically normalized in our Fisher's Exact test background computations.</li>
+                        </ul>
+                    </div>
+                    <div class="chart-container">
+                        <!-- Custom CSS/SVG Bar Chart comparing selection substitutions -->
+                        <div style="width: 100%; display: flex; flex-direction: column; gap: 20px;">
+                            <div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                    <span>Echolocating (110 species)</span>
+                                    <span class="highlight">415,844</span>
+                                </div>
+                                <div style="width: 100%; height: 24px; background:#1e293b; border-radius:12px; overflow:hidden;">
+                                    <div style="width: 90.4%; height: 100%; background: linear-gradient(to right, #38bdf8, #a78bfa); border-radius:12px;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                    <span>Control (28 species)</span>
+                                    <span class="highlight-purple">43,988</span>
+                                </div>
+                                <div style="width: 100%; height: 24px; background:#1e293b; border-radius:12px; overflow:hidden;">
+                                    <div style="width: 9.6%; height: 100%; background: #a78bfa; border-radius:12px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 6 of 18</span>
+                <span>Echolocation Screen Statistics</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Echolocation Top Hits -->
+        <div class="slide" id="slide-7">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Top Genes Enriched in Echolocators
+            </h1>
+            <div class="slide-content" style="justify-content: flex-start; overflow: visible;">
+                <p style="margin-bottom: 10px; font-size: 0.95rem;">Ranked by statistical significance ($P$-value). Full screen results are available in <code class="highlight">echolocation_screen_results.csv</code>.</p>
+                <div style="overflow-x: auto; max-height: 400px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Gene</th>
+                                <th>Echo Subs</th>
+                                <th>Ctrl Subs</th>
+                                <th>Odds Ratio</th>
+                                <th>P-value</th>
+                                <th>FDR Q-value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td class="highlight">RNASE9</td>
+                                <td>494</td>
+                                <td>0</td>
+                                <td>&infin;</td>
+                                <td>2.60 &times; 10<sup>-22</sup></td>
+                                <td>2.38 &times; 10<sup>-18</sup></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td class="highlight">RNPEP</td>
+                                <td>1093</td>
+                                <td>27</td>
+                                <td>4.29</td>
+                                <td>9.62 &times; 10<sup>-22</sup></td>
+                                <td>4.39 &times; 10<sup>-18</sup></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td class="highlight">GPRIN1</td>
+                                <td>246</td>
+                                <td>0</td>
+                                <td>&infin;</td>
+                                <td>1.80 &times; 10<sup>-11</sup></td>
+                                <td>5.47 &times; 10<sup>-08</sup></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td class="highlight">AOX1</td>
+                                <td>562</td>
+                                <td>15</td>
+                                <td>3.97</td>
+                                <td>3.20 &times; 10<sup>-11</sup></td>
+                                <td>5.94 &times; 10<sup>-08</sup></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td class="highlight">PTPRH</td>
+                                <td>471</td>
+                                <td>10</td>
+                                <td>4.99</td>
+                                <td>3.53 &times; 10<sup>-11</sup></td>
+                                <td>5.94 &times; 10<sup>-08</sup></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td class="highlight">RSBN1</td>
+                                <td>707</td>
+                                <td>24</td>
+                                <td>3.12</td>
+                                <td>3.91 &times; 10<sup>-11</sup></td>
+                                <td>5.94 &times; 10<sup>-08</sup></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td class="highlight">FHAD1</td>
+                                <td>235</td>
+                                <td>1</td>
+                                <td>24.87</td>
+                                <td>1.28 &times; 10<sup>-09</sup></td>
+                                <td>1.66 &times; 10<sup>-06</sup></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td class="highlight">IFI44</td>
+                                <td>422</td>
+                                <td>10</td>
+                                <td>4.47</td>
+                                <td>1.70 &times; 10<sup>-09</sup></td>
+                                <td>1.94 &times; 10<sup>-06</sup></td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td class="highlight">MAN2B2</td>
+                                <td>185</td>
+                                <td>0</td>
+                                <td>&infin;</td>
+                                <td>8.31 &times; 10<sup>-09</sup></td>
+                                <td>8.43 &times; 10<sup>-06</sup></td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td class="highlight">NLRP4</td>
+                                <td>239</td>
+                                <td>2</td>
+                                <td>12.65</td>
+                                <td>1.04 &times; 10<sup>-08</sup></td>
+                                <td>9.50 &times; 10<sup>-06</sup></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 7 of 18</span>
+                <span>Top Hits Screen</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Echolocation Bio Hair Cells/Energetics -->
+        <div class="slide" id="slide-8">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+                Echolocation Biology: Hair Cells & Energetics
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div class="info-card" style="border-left-color: var(--accent-rose); height: 100%;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <h4 style="color:var(--accent-rose);">CEACAM18</h4>
+                            <span class="highlight">Q = 0.0001</span>
+                        </div>
+                        <p style="font-size:0.95rem; margin-bottom:10px;"><strong>Inner Ear Mechanics & Cochlear Hair Cells:</strong> Known to be expressed specifically in outer hair cells of the mammalian cochlea.</p>
+                        <ul style="margin-left:20px; font-size:0.9rem;">
+                            <li><strong>Echo Subs</strong>: 204 substitutions vs. <strong>Control</strong>: 2</li>
+                            <li>CEACAM18 structural integrity is vital for the tectorial membrane.</li>
+                            <li>The high concentration of selection on terminal branches suggests remodeling of inner ear mechanics to support ultrasonic sound reception.</li>
+                        </ul>
+                    </div>
+                    <div class="info-card" style="border-left-color: var(--accent-green); height: 100%;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <h4 style="color:var(--accent-green);">AOX1</h4>
+                            <span class="highlight">Q = 0.0000</span>
+                        </div>
+                        <p style="font-size:0.95rem; margin-bottom:10px;"><strong>Redox Homeostasis & ROS Management:</strong> Aldehyde Oxidase 1 produces hydrogen peroxide and regulates xenobiotic clearance.</p>
+                        <ul style="margin-left:20px; font-size:0.9rem;">
+                            <li><strong>Echo Subs</strong>: 562 substitutions vs. <strong>Control</strong>: 15</li>
+                            <li>Active flight (bats) and deep-diving (odontocetes) represent massive metabolic and oxidative stress loads.</li>
+                            <li>Selection on AOX1 reflects metabolic adaptations to process high Reactive Oxygen Species (ROS) loads.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 8 of 18</span>
+                <span>Hearing & Metabolic Adaptations</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: Echolocation Bio Auditory/Reproduction -->
+        <div class="slide" id="slide-9">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><circle cx="12" cy="12" r="3"/></svg>
+                Echolocation Biology: Auditory Wiring & Sperm
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div class="info-card" style="border-left-color: var(--accent-blue); height: 100%;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <h4 style="color:var(--accent-blue);">GPRIN1</h4>
+                            <span class="highlight">Q = 0.0000</span>
+                        </div>
+                        <p style="font-size:0.95rem; margin-bottom:10px;"><strong>Auditory Circuit Growth Cone Dynamics:</strong> Important for neurite outgrowth, cell projection, and growth cone dynamics during development.</p>
+                        <ul style="margin-left:20px; font-size:0.9rem;">
+                            <li><strong>Echo Subs</strong>: 246 substitutions vs. <strong>Control</strong>: 0</li>
+                            <li>We hypothesize that selection on GPRIN1 remodeling relates to the fine-grained wiring of neurosensory and auditory processing circuits in echolocators.</li>
+                        </ul>
+                    </div>
+                    <div class="info-card" style="border-left-color: var(--accent-purple); height: 100%;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <h4 style="color:var(--accent-purple);">RNASE9</h4>
+                            <span class="highlight">Q = 0.0000</span>
+                        </div>
+                        <p style="font-size:0.95rem; margin-bottom:10px;"><strong>Sperm Maturation & Motility:</strong> Ribonuclease A Family Member 9 is highly expressed in the epididymis.</p>
+                        <ul style="margin-left:20px; font-size:0.9rem;">
+                            <li><strong>Echo Subs</strong>: 494 substitutions vs. <strong>Control</strong>: 0</li>
+                            <li>Plays critical roles in sperm defense, maturation, and reproductive fitness.</li>
+                            <li>Extreme selection specifically in echolocating lineages implies parallel reproductive or host defense shifts.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 9 of 18</span>
+                <span>Neurological & Physiological Selection</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: Hypothesis 1 Intro -->
+        <div class="slide" id="slide-10">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Hypothesis 1: Population Size & Purifying Selection
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <div class="info-card" style="margin-bottom:15px;">
+                            <h4>Population Genetics Theory</h4>
+                            <p>Lineages with large effective population sizes ($N_e$) should undergo more efficient natural selection, leading to stronger purifying constraint (lower background $dN/dS$, or &omega;).</p>
+                        </div>
+                        <div class="info-card" style="border-left-color: var(--accent-rose); margin-bottom:15px;">
+                            <h4>The Short-Branch Mirage (Bias)</h4>
+                            <p>Species-dense clades (e.g. Primates, Cetacea) have systematically shorter terminal branches. On short branches, synonymous substitutions ($dS$) are frequently zero, which mathematically inflates MLE &omega; estimates (division by near-zero).</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color:var(--text-primary); margin-bottom:10px;">Divergence & Bias:</h4>
+                        <ul style="margin-left:20px; line-height: 1.8;">
+                            <li><strong>Primates/Cetacea branch lengths</strong>: Median $\approx 0.0009$ substitutions/site.</li>
+                            <li><strong>Rodentia/Chiroptera branch lengths</strong>: Median $\approx 0.006$ substitutions/site.</li>
+                            <li>Unfiltered background analysis shows an artificial negative correlation ($r \approx -0.58$) between terminal branch length and estimated background omega.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 10 of 18</span>
+                <span>Purifying Selection Bias</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: Hypothesis 1 Method -->
+        <div class="slide" id="slide-11">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Hypothesis 1: Controlling for Branch Length Bias
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <p style="margin-bottom:15px;">To resolve this math artifact, we implemented a branch-length filtering threshold, keeping only terminal branches with length <span class="highlight">> 0.003 substitutions/site</span>.</p>
+                        <div class="info-card" style="border-left-color: var(--accent-purple);">
+                            <h4>Effect of Filter:</h4>
+                            <p>Applying the filter successfully removes the mathematical inflation of $\omega$ on short branches, exposing true biological purifying constraint differences across mammalian clades.</p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <!-- Custom SVG showing branch length bias curve -->
+                        <svg width="100%" height="220" viewBox="0 0 300 200">
+                            <!-- Grid lines -->
+                            <line x1="40" y1="160" x2="280" y2="160" stroke="rgba(148,163,184,0.2)" stroke-width="1"/>
+                            <line x1="40" y1="40" x2="280" y2="40" stroke="rgba(148,163,184,0.1)" stroke-width="1"/>
+                            <line x1="100" y1="20" x2="100" y2="160" stroke="var(--accent-rose)" stroke-width="1.5" stroke-dasharray="4 4"/>
+                            
+                            <!-- Curve: Unfiltered Omega -->
+                            <path d="M 45,30 Q 70,60 100,120 T 280,140" fill="none" stroke="var(--accent-rose)" stroke-width="2.5"/>
+                            <!-- Curve: True constraint -->
+                            <line x1="40" y1="130" x2="280" y2="135" stroke="var(--accent-blue)" stroke-width="2" stroke-dasharray="2 2"/>
+                            
+                            <!-- Labels -->
+                            <text x="105" y="35" fill="var(--accent-rose)" font-size="8" font-weight="bold">Filter Threshold (0.003)</text>
+                            <text x="200" y="100" fill="var(--accent-rose)" font-size="10">Unfiltered (Inflated)</text>
+                            <text x="200" y="150" fill="var(--accent-blue)" font-size="10">Filtered (True Ne)</text>
+                            
+                            <!-- Axes -->
+                            <line x1="40" y1="160" x2="40" y2="20" stroke="var(--text-secondary)" stroke-width="1.5"/>
+                            <line x1="40" y1="160" x2="280" y2="160" stroke="var(--text-secondary)" stroke-width="1.5"/>
+                            
+                            <text x="160" y="180" fill="var(--text-secondary)" font-size="9" text-anchor="middle">Terminal Branch Length (Subs/Site)</text>
+                            <text x="15" y="90" fill="var(--text-secondary)" font-size="9" text-anchor="middle" transform="rotate(-90 15 90)">Estimated dN/dS (Omega)</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 11 of 18</span>
+                <span>Branch Length Curation</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: Hypothesis 1 Results -->
+        <div class="slide" id="slide-12">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                Hypothesis 1 Results: Purifying Selection Constraint
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <p style="margin-bottom:15px;">After branch-length filtering (>0.003), clades with larger effective population sizes ($N_e$) exhibit significantly stronger purifying selection (lower background $\omega$):</p>
+                        <div class="info-card" style="border-left-color: var(--accent-green); margin-bottom:12px; font-size:0.95rem;">
+                            <strong>Rodentia vs. Primates:</strong><br>
+                            Rodentia (Large $N_e$, Median $\omega = 0.100$) vs. Primates (Small $N_e$, Median $\omega = 0.143$).<br>
+                            <em>Mann-Whitney U P = $3.14 \times 10^{-179}$, CLES = 56.5%</em>
+                        </div>
+                        <div class="info-card" style="border-left-color: var(--accent-green); font-size:0.95rem;">
+                            <strong>Chiroptera vs. Cetacea:</strong><br>
+                            Chiroptera (Large $N_e$, Median $\omega = 0.115$) vs. Cetacea (Small $N_e$, Median $\omega = 0.197$).<br>
+                            <em>Mann-Whitney U P = $5.34 \times 10^{-161}$, CLES = 60.3%</em>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="flex-direction: column;">
+                        <!-- Custom CSS/SVG Bar chart showing Median background omega values -->
+                        <h4 style="color:var(--text-primary); margin-bottom:15px; font-size:1rem;">Median Purifying Selection Background Omega (&omega;)</h4>
+                        <div style="width: 100%; display: flex; flex-direction: column; gap: 15px;">
+                            <div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:3px; font-size:0.9rem;">
+                                    <span>Rodentia (Large Ne)</span>
+                                    <span class="highlight-green">0.100</span>
+                                </div>
+                                <div style="width:100%; height:16px; background:#1e293b; border-radius:8px; overflow:hidden;">
+                                    <div style="width: 40%; height:100%; background:var(--accent-green); border-radius:8px;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:3px; font-size:0.9rem;">
+                                    <span>Chiroptera (Large Ne)</span>
+                                    <span class="highlight-green">0.115</span>
+                                </div>
+                                <div style="width:100%; height:16px; background:#1e293b; border-radius:8px; overflow:hidden;">
+                                    <div style="width: 46%; height:100%; background:var(--accent-green); border-radius:8px;"></div>
+                                </div>
+                            </div>
+                            <div style="border-top:1px solid rgba(148,163,184,0.1); padding-top:10px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:3px; font-size:0.9rem;">
+                                    <span>Primates (Small Ne)</span>
+                                    <span class="highlight-rose">0.143</span>
+                                </div>
+                                <div style="width:100%; height:16px; background:#1e293b; border-radius:8px; overflow:hidden;">
+                                    <div style="width: 57%; height:100%; background:var(--accent-rose); border-radius:8px;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:3px; font-size:0.9rem;">
+                                    <span>Cetacea (Small Ne)</span>
+                                    <span class="highlight-rose">0.197</span>
+                                </div>
+                                <div style="width:100%; height:16px; background:#1e293b; border-radius:8px; overflow:hidden;">
+                                    <div style="width: 79%; height:100%; background:var(--accent-rose); border-radius:8px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 12 of 18</span>
+                <span>Purifying Selection Results</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: Hypothesis 2 Clade shifts -->
+        <div class="slide" id="slide-13">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                Hypothesis 2: Dynamic Selection Clade-Shifts
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <p style="margin-bottom:15px;">Do evolutionary adaptive landscapes shift between deep mammalian lineages (epistasis), or remain constant across structural hotspots?</p>
+                        <div class="info-card" style="border-left-color: var(--accent-purple); margin-bottom:15px; font-size:0.95rem;">
+                            <strong>Stratified Permutation Test (49,013 sites):</strong><br>
+                            Shuffled positive selection branches across tree topologies (10,000 permutations) to create a controlled null expectation.
+                        </div>
+                        <ul style="margin-left: 20px; font-size: 0.95rem; line-height:1.7;">
+                            <li><strong>Shared Selection Sites</strong>: Observed <span class="highlight-rose">91.84%</span> is significantly lower than the expected <span class="highlight">94.36%</span> (Ratio = 0.973, $P = 9.29 \times 10^{-201}$).</li>
+                            <li><strong>Euarchontoglires-only Sites</strong>: Enriched by ~2-fold (Observed 4.05% vs Expected 2.14%).</li>
+                            <li><strong>Laurasiatheria-only Sites</strong>: Enriched by 16% (Observed 3.97% vs Expected 3.42%).</li>
+                        </ul>
+                    </div>
+                    <div class="chart-container" style="flex-direction: column;">
+                        <h4 style="color:var(--text-primary); margin-bottom:10px; font-size:0.95rem;">Shared Selected Sites (Observed vs Expected)</h4>
+                        <!-- Custom visual representation of permutation overlap results -->
+                        <svg width="220" height="150" viewBox="0 0 200 120">
+                            <rect x="20" y="30" width="160" height="20" rx="10" fill="#1e293b"/>
+                            <!-- Expected shared bar -->
+                            <rect x="20" y="30" width="151" height="20" rx="10" fill="var(--accent-blue)"/>
+                            <text x="140" y="22" fill="var(--accent-blue)" font-size="8" font-weight="bold">Expected (94.36%)</text>
+                            
+                            <rect x="20" y="75" width="160" height="20" rx="10" fill="#1e293b"/>
+                            <!-- Observed shared bar -->
+                            <rect x="20" y="75" width="147" height="20" rx="10" fill="var(--accent-rose)"/>
+                            <text x="140" y="67" fill="var(--accent-rose)" font-size="8" font-weight="bold">Observed (91.84%)</text>
+                            
+                            <line x1="147" y1="55" x2="151" y2="55" stroke="var(--text-secondary)" stroke-width="1"/>
+                            <text x="80" y="112" fill="var(--text-secondary)" font-size="8">Significance: P = 9.29e-201</text>
+                        </svg>
+                        <p style="font-size:0.85rem; text-align:center; color:var(--text-secondary); margin-top:10px;">The overlap is significantly smaller than the null expectation, proving that selection targets shift due to epistasis and niche differentiation.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 13 of 18</span>
+                <span>Clade-Specific Hotspots</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 14: Hypothesis 3 Biphasic species curve -->
+        <div class="slide" id="slide-14">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+                Hypothesis 3: Species Return Curves
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <p style="margin-bottom:15px;">Does adding more genomes to an alignment indefinitely yield linear returns in selection detection power?</p>
+                        <div class="info-card" style="border-left-color: var(--accent-rose); margin-bottom:15px; font-size:0.95rem;">
+                            <strong>The Biphasic Return Curve:</strong><br>
+                            Selection density peaks at intermediate species counts (500–600 genomes, density = 0.024) but drops by 4-fold in genes represented across 700+ genomes (density = 0.005).
+                        </div>
+                        <ul style="margin-left: 20px; font-size:0.95rem; line-height:1.7;">
+                            <li><strong>Immutable Housekeeping Genes</strong>: Genes annotated across all 700+ species represent core housekeeping machinery (e.g. ribosomes, translation, transcription).</li>
+                            <li>These genes are under intense purifying selection and rarely tolerate non-synonymous changes, which explains the drop-off in positive selection density.</li>
+                        </ul>
+                    </div>
+                    <div class="chart-container">
+                        <!-- Custom SVG showing Biphasic Curve -->
+                        <svg width="100%" height="220" viewBox="0 0 300 200">
+                            <line x1="40" y1="160" x2="280" y2="160" stroke="var(--text-secondary)" stroke-width="1.5"/>
+                            <line x1="40" y1="160" x2="40" y2="20" stroke="var(--text-secondary)" stroke-width="1.5"/>
+                            
+                            <!-- Biphasic Curve -->
+                            <path d="M 40,150 C 100,100 170,40 210,50 C 240,60 255,140 280,150" fill="none" stroke="var(--accent-blue)" stroke-width="3"/>
+                            
+                            <!-- Highlight Dot -->
+                            <circle cx="210" cy="50" r="5" fill="var(--accent-rose)"/>
+                            
+                            <!-- Labels -->
+                            <text x="215" y="40" fill="var(--accent-rose)" font-size="8" font-weight="bold">Peak Density (500-600 spp)</text>
+                            <text x="250" y="125" fill="var(--text-secondary)" font-size="8">700+ spp Drop-off</text>
+                            
+                            <text x="160" y="180" fill="var(--text-secondary)" font-size="9" text-anchor="middle">Species Count in Alignment</text>
+                            <text x="15" y="90" fill="var(--text-secondary)" font-size="9" text-anchor="middle" transform="rotate(-90 15 90)">Positive Selection Density</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 14 of 18</span>
+                <span>Biphasic Sampling Dynamics</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 15: Hypothesis 3 Tree length -->
+        <div class="slide" id="slide-15">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                Hypothesis 3: Tree Length Drives Power
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <p style="margin-bottom:15px;">If species count is a poor proxy for selection power, what drives selection discovery?</p>
+                        <div class="info-card" style="border-left-color: var(--accent-green); margin-bottom:15px; font-size:0.95rem;">
+                            <strong>Mutational Depth (Tree Length):</strong><br>
+                            Tree Length represents the total evolutionary divergence in the tree (substitutions/site). It correlates strongly with selection density ($r_s = 0.30$, $P = 3.05 \times 10^{-212}$).
+                        </div>
+                        <ul style="margin-left: 20px; font-size:0.95rem; line-height:1.7;">
+                            <li>Logarithmic models fit the curve significantly better than linear models ($R^2 = 0.0069$, $AIC = -62640.09$), showing a gradual return saturation.</li>
+                            <li><strong>Takeaway:</strong> Alignments need evolutionary depth (tree branch diversity) rather than sheer species counts to maximize adaptive site discovery.</li>
+                        </ul>
+                    </div>
+                    <div class="chart-container">
+                        <!-- Custom SVG showing Logarithmic return curve -->
+                        <svg width="100%" height="220" viewBox="0 0 300 200">
+                            <line x1="40" y1="160" x2="280" y2="160" stroke="var(--text-secondary)" stroke-width="1.5"/>
+                            <line x1="40" y1="160" x2="40" y2="20" stroke="var(--text-secondary)" stroke-width="1.5"/>
+                            
+                            <!-- Logarithmic curve -->
+                            <path d="M 40,150 Q 80,70 280,55" fill="none" stroke="var(--accent-green)" stroke-width="3"/>
+                            
+                            <text x="180" y="45" fill="var(--accent-green)" font-size="9" font-weight="bold">Logarithmic Returns Curve</text>
+                            
+                            <text x="160" y="180" fill="var(--text-secondary)" font-size="9" text-anchor="middle">Tree Length (Substitutions/Site)</text>
+                            <text x="15" y="90" fill="var(--text-secondary)" font-size="9" text-anchor="middle" transform="rotate(-90 15 90)">Positive Selection Density</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 15 of 18</span>
+                <span>Evolutionary Divergence Power</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 16: Purifying Selection & GO Enrichment -->
+        <div class="slide" id="slide-16">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+                GO Enrichment: Extreme Purifying Selection
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div class="info-card" style="border-left-color: var(--accent-blue); height: 100%;">
+                        <h4 style="color:var(--accent-blue);">Homogeneous Purifying Selection</h4>
+                        <span style="font-size:0.85rem; color:var(--text-secondary);">($0.10 \le dN/dS \le 0.50$, zero positive selection)</span>
+                        <p style="font-size:0.9rem; margin-top:10px; margin-bottom:5px;">Genes under constraint but retaining moderate plasticity. Top GO Processes:</p>
+                        <ol style="margin-left:20px; font-size:0.85rem; line-height:1.6;">
+                            <li><strong>Mitochondrial Translation</strong><br><em>(GO:0032543, Adj P = $3.04 \times 10^{-7}$)</em></li>
+                            <li><strong>Mitochondrial Gene Expression</strong><br><em>(GO:0140053, Adj P = $2.64 \times 10^{-6}$)</em></li>
+                            <li><strong>Positive Regulation of Oxidoreductase Activity</strong><br><em>(GO:0051353, Adj P = $2.11 \times 10^{-2}$)</em></li>
+                        </ol>
+                    </div>
+                    <div class="info-card" style="border-left-color: var(--accent-purple); height: 100%;">
+                        <h4 style="color:var(--accent-purple);">Ultraconserved Mammalian Genes</h4>
+                        <span style="font-size:0.85rem; color:var(--text-secondary);">($dN/dS < 0.10$, zero positive selection)</span>
+                        <p style="font-size:0.9rem; margin-top:10px; margin-bottom:5px;">Core developmental and intercellular channels. Top GO Processes:</p>
+                        <ol style="margin-left:20px; font-size:0.85rem; line-height:1.6;">
+                            <li><strong>Chondroitin Sulfate Biosynthesis</strong><br><em>(GO:0030206, Adj P = $1.73 \times 10^{-2}$)</em></li>
+                            <li><strong>Regulation of Cytosolic Calcium</strong><br><em>(GO:0051482, Adj P = $1.73 \times 10^{-2}$)</em></li>
+                            <li><strong>Cell-Cell Junction Assembly & Org.</strong><br><em>(GO:0007043, Adj P = $1.73 \times 10^{-2}$)</em></li>
+                            <li><strong>Action Potential</strong><br><em>(GO:0001508, Adj P = $2.30 \times 10^{-2}$)</em></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 16 of 18</span>
+                <span>Purifying Selection Pathways</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 17: Deep learning PhyloAxialTransformer -->
+        <div class="slide" id="slide-17">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                Scaling Selection: PhyloAxialTransformer
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <p style="margin-bottom: 12px;">Standard comparative genomic likelihood optimizations (e.g. MEME, aBSREL) require hours per gene and fail to scale to VGP limits (thousands of species).</p>
+                        <div class="info-card">
+                            <h4>Machine Learning-Assisted Selection Screens</h4>
+                            <p>We developed a regression transformer (<strong>PhyloAxialTransformer</strong>) that bypasses expensive numerical optimizations to predict selection statistics.</p>
+                        </div>
+                        <ul style="margin-left: 20px; font-size:0.9rem; line-height:1.7;">
+                            <li><strong>Inputs</strong>: Combines sequence token embeddings, branch patristic distances, and multidimensional scaling (MDS) tree coordinates.</li>
+                            <li><strong>Performance</strong>: Predicts regularized LRT statistics, filtering alignment/sequencing noise and accelerating analysis speeds by orders of magnitude.</li>
+                        </ul>
+                    </div>
+                    <div class="chart-container" style="flex-direction: column;">
+                        <!-- Custom SVG illustrating PhyloAxialTransformer flow -->
+                        <h4 style="color:var(--text-primary); margin-bottom:10px; font-size:0.95rem;">Model Architecture Overview</h4>
+                        <svg width="240" height="150" viewBox="0 0 240 150">
+                            <!-- Input Box -->
+                            <rect x="10" y="10" width="80" height="30" rx="6" fill="rgba(148,163,184,0.1)" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                            <text x="50" y="28" fill="var(--text-primary)" font-size="7.5" text-anchor="middle">Alignment Tokens</text>
+                            
+                            <rect x="10" y="55" width="80" height="30" rx="6" fill="rgba(148,163,184,0.1)" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                            <text x="50" y="73" fill="var(--text-primary)" font-size="7.5" text-anchor="middle">Patristic Matrix</text>
+                            
+                            <rect x="10" y="100" width="80" height="30" rx="6" fill="rgba(148,163,184,0.1)" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                            <text x="50" y="118" fill="var(--text-primary)" font-size="7.5" text-anchor="middle">MDS Coordinates</text>
+                            
+                            <!-- Arrow lines -->
+                            <line x1="90" y1="25" x2="120" y2="70" stroke="var(--text-secondary)" stroke-width="1"/>
+                            <line x1="90" y1="70" x2="120" y2="70" stroke="var(--text-secondary)" stroke-width="1"/>
+                            <line x1="90" y1="115" x2="120" y2="70" stroke="var(--text-secondary)" stroke-width="1"/>
+                            
+                            <!-- Transformer block -->
+                            <rect x="120" y="50" width="55" height="40" rx="8" fill="rgba(167,139,250,0.2)" stroke="var(--accent-purple)" stroke-width="2"/>
+                            <text x="147" y="70" fill="var(--text-primary)" font-size="7.5" font-weight="bold" text-anchor="middle">Axial</text>
+                            <text x="147" y="80" fill="var(--text-primary)" font-size="7.5" font-weight="bold" text-anchor="middle">Transformer</text>
+                            
+                            <line x1="175" y1="70" x2="195" y2="70" stroke="var(--text-secondary)" stroke-width="1.5"/>
+                            
+                            <!-- Output -->
+                            <rect x="195" y="55" width="40" height="30" rx="6" fill="rgba(52,211,153,0.2)" stroke="var(--accent-green)" stroke-width="1.5"/>
+                            <text x="215" y="73" fill="var(--text-primary)" font-size="7.5" text-anchor="middle">LRT Stats</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 17 of 18</span>
+                <span>Deep Learning Scale</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 18: Strategic outlook -->
+        <div class="slide" id="slide-18">
+            <h1 class="slide-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Strategic Outlook: NIH & NSF Grant Strategy
+            </h1>
+            <div class="slide-content">
+                <div class="grid-2">
+                    <div>
+                        <p style="margin-bottom: 12px;">This preliminary framework is optimized to anchor grant proposals (e.g. NIH R01, NSF, or ERC), framing our developments around VGP-scale projects:</p>
+                        <div class="info-card" style="border-left-color: var(--accent-blue); margin-bottom: 10px;">
+                            <strong>Aim 1: Curation Validation Engines</strong><br>
+                            Regularize branch-length MLE statistics to de-bias scale artifacts.
+                        </div>
+                        <div class="info-card" style="border-left-color: var(--accent-purple); margin-bottom: 10px;">
+                            <strong>Aim 2: Dynamic Epistatic Mapping</strong><br>
+                            Develop algorithms to outline structural hotspots and clade-shifts.
+                        </div>
+                        <div class="info-card" style="border-left-color: var(--accent-green);">
+                            <strong>Aim 3: Optimal Sampling Tools</strong><br>
+                            Pre-calculate information value of genomes to guide VGP sequencing designs.
+                        </div>
+                    </div>
+                    <div style="background: rgba(15,23,42,0.4); border: 1px dashed rgba(148,163,184,0.2); padding: 25px; border-radius: 20px;">
+                        <h4 style="color:var(--accent-blue); margin-bottom:12px;">Collaborators Strategic Takeaway:</h4>
+                        <p style="font-size:0.95rem; line-height:1.7; color:var(--text-secondary);">
+                            VGP-scale data is not just "larger"—it exposes structural mathematical limits in classical codon models. Our tool suite provides the necessary bias-corrected, machine-learning-accelerated platform to scale comparative genomics to tens of thousands of vertebrate assemblies.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Slide 18 of 18</span>
+                <span>Grant Narrative Integration</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Presentation Controls UI -->
+    <div id="controls">
+        <button class="btn" onclick="prevSlide()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            Previous
+        </button>
+        <span id="slide-indicator">Slide 1 of 18</span>
+        <button class="btn" onclick="nextSlide()">
+            Next
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+    </div>
+
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 18;
+
+        function updateSlide() {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active', 'prev-slide');
+            });
+
+            const currentElement = document.getElementById(`slide-${currentSlide}`);
+            currentElement.classList.add('active');
+
+            // Set styling for previous slides to slide them left
+            for (let i = 1; i < currentSlide; i++) {
+                document.getElementById(`slide-${i}`).classList.add('prev-slide');
+            }
+
+            document.getElementById('slide-indicator').textContent = `Slide ${currentSlide} of ${totalSlides}`;
+            
+            // Update Progress Bar
+            const percent = ((currentSlide - 1) / (totalSlides - 1)) * 100;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        function toggleHelp() {
+            const modal = document.getElementById('help-modal');
+            const overlay = document.getElementById('help-overlay');
+            const display = window.getComputedStyle(modal).display;
+            
+            if (display === 'none') {
+                modal.style.display = 'block';
+                overlay.style.display = 'block';
+            } else {
+                modal.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+        }
+
+        // Keyboard Controls
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                event.preventDefault();
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                prevSlide();
+            } else if (event.key === 'Home') {
+                event.preventDefault();
+                currentSlide = 1;
+                updateSlide();
+            } else if (event.key === 'End') {
+                event.preventDefault();
+                currentSlide = totalSlides;
+                updateSlide();
+            } else if (event.key.toLowerCase() === 'f') {
+                event.preventDefault();
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.error(`Error enabling fullscreen: ${err.message}`);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            } else if (event.key === 'Escape') {
+                const modal = document.getElementById('help-modal');
+                if (window.getComputedStyle(modal).display === 'block') {
+                    toggleHelp();
+                }
+            }
+        });
+
+        // Initialize progress bar width on load
+        updateSlide();
+    </script>
+</body>
+</html>
